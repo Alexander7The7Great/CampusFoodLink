@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusFoodLink – Menu Management</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    .header {
+      text-align: center;
+      padding: 14px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 10px 16px;
+      margin: 0 10px;
+    }
+
+    .nav-btn {
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover { background: #d4c48e; }
+
+    .nav-center {
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .total-box {
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 8px 14px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .main {
+      display: flex;
+      gap: 0;
+      margin: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .menu-section {
+      flex: 2;
+      border-right: 1px solid #ccc;
+      padding: 16px;
+    }
+
+    .menu-section h3 {
+      text-align: center;
+      font-size: 15px;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .menu-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .available-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      right: 3px;
+    }
+
+    .card-btns {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .card-btns button {
+      flex: 1;
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 4px 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .card-btns button:hover { background: #d4c48e; }
+
+    .add-section {
+      flex: 1;
+      padding: 16px;
+    }
+
+    .add-section h3 {
+      font-size: 15px;
+      font-weight: normal;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #bbb;
+      font-size: 13px;
+      background: #fafafa;
+    }
+
+    .add-btn {
+      width: 100%;
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: right;
+    }
+
+    .add-btn:hover { background: #d4c48e; }
+
+    /* Hamburger */
+    .hamburger {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      cursor: pointer;
+      font-size: 22px;
+      z-index: 100;
+    }
+
+    .dropdown {
+      display: none;
+      position: fixed;
+      top: 44px;
+      right: 16px;
+      background: #fff;
+      border: 1px solid #ccc;
+      z-index: 100;
+      min-width: 180px;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 16px;
+      font-size: 13px;
+      text-decoration: none;
+      color: #111;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown a:hover { background: #e8d9a8; }
+  </style>
+</head>
+<body>
+
+  <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  <div class="dropdown" id="navMenu">
+    <a href="login.html">Login</a>
+    <a href="student-home.html">Student Home</a>
+    <a href="vendor-menu.html">Vendor Menu</a>
+    <a href="vendor-home.html">Vendor Home</a>
+    <a href="menu-management.html">Menu Management</a>
+  </div>
+
+  <div class="header">CampusFoodLink</div>
+
+  <div class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" onclick="window.location.href='vendor-home.html'">Home</button>
+    </div>
+    <div class="nav-center">-Vendor Name- Menu Management</div>
+    <div class="nav-right">
+      <div class="total-box">
+        Total Menu Items<br/>
+        6
+      </div>
+      <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="menu-section"> <!--Pull each item from the menu_item table to display to the vendor and allow for quick changes-->
+      <h3>Menu</h3>
+      <div class="menu-grid">
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div> <!--Quick switch for updating if food is available in the menu-->
+
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>  <!--Update details on specific food on the menu-->
+            <button>Delete</button> <!--Remove a food from the menu-->
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <p>-Food Name-</p>
+          <p>-Food Description-</p>
+          <p>-Food Price-</p>
+          <div class="available-row">
+            <span>Available</span>
+            <div class="toggle"></div>
+          </div>
+          <div class="card-btns">
+            <button>Edit</button>
+            <button>Delete</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="add-section">
+      <h3>Add Items</h3>
+        <!--Create a new item in the menu_item table-->
+      <div class="form-group">
+        <label>Food Name:</label>
+        <input type="text" placeholder="Example: Fries" />
+      </div>
+
+      <div class="form-group">
+        <label>Food Description:</label>
+        <input type="text" placeholder="Example: Fried Golden and Salted" />
+      </div>
+
+      <div class="form-group">
+        <label>Food Price:</label>
+        <input type="text" placeholder="Example: 2.50" />
+      </div>
+
+      <button class="add-btn">Add to Menu</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+
+</body>
+</html>

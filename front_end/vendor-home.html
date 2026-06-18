@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CampusFoodLink – Vendor Home</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    .header {
+      text-align: center;
+      padding: 14px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 10px 16px;
+      margin: 0 10px;
+    }
+
+    .nav-btn {
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover { background: #d4c48e; }
+
+    .nav-center {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .active-box {
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 8px 14px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .main {
+      display: flex;
+      gap: 0;
+      margin: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .orders-section {
+      flex: 2;
+      border-right: 1px solid #ccc;
+      padding: 16px;
+    }
+
+    .orders-section h3 {
+      text-align: center;
+      font-size: 15px;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .order-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .order-card-btns {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .order-card-btns button {
+      flex: 1;
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 4px 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .order-card-btns button:hover { background: #d4c48e; }
+
+    .queue-section {
+      margin-top: 8px;
+    }
+
+    .queue-section h3 {
+      text-align: center;
+      font-size: 15px;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .queue-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .queue-card button {
+      margin-top: 6px;
+      background: #e8d9a8;
+      border: 1px solid #bbb;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .queue-card button:hover { background: #d4c48e; }
+
+    .availability-section {
+      flex: 1;
+      padding: 16px;
+    }
+
+    .availability-section h3 {
+      text-align: center;
+      font-size: 15px;
+      font-weight: normal;
+      margin-bottom: 12px;
+    }
+
+    .availability-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      right: 3px;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      cursor: pointer;
+      font-size: 22px;
+      z-index: 100;
+    }
+
+    .dropdown {
+      display: none;
+      position: fixed;
+      top: 44px;
+      right: 16px;
+      background: #fff;
+      border: 1px solid #ccc;
+      z-index: 100;
+      min-width: 180px;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 16px;
+      font-size: 13px;
+      text-decoration: none;
+      color: #111;
+      border-bottom: 1px solid #eee;
+    }
+
+    .dropdown a:hover { background: #e8d9a8; }
+  </style>
+</head>
+<body>
+
+  <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  <div class="dropdown" id="navMenu">
+    <a href="login.html">Login</a>
+    <a href="student-home.html">Student Home</a>
+    <a href="vendor-menu.html">Vendor Menu</a>
+    <a href="vendor-home.html">Vendor Home</a>
+    <a href="menu-management.html">Menu Management</a>
+  </div>
+
+  <div class="header">CampusFoodLink</div>
+
+  <div class="navbar">
+    <div class="nav-left">
+      <button class="nav-btn" onclick="window.location.href='menu-management.html'">Menu Management</button>
+    </div>
+    <div class="nav-center">-Vendor Name- Home</div>
+    <div class="nav-right">
+      <div class="active-box">
+        Total Active Orders<br/>
+        3
+      </div>
+      <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="orders-section">
+
+      <h3>Incoming Orders</h3>
+      <div class="order-grid">
+
+        <div class="order-card">
+          <p>-Order-</p>
+          <p>-Food Name- x 1</p>
+          <p>-Food Name- x 3</p>
+          <div class="order-card-btns">
+            <button>Reject</button>
+            <button>Accept</button>
+          </div>
+        </div>
+
+        <div class="order-card">
+          <p>-Order-</p>
+          <p>-Food Name- x 1</p>
+          <p>-Food Name- x 3</p>
+          <div class="order-card-btns">
+            <button>Reject</button>
+            <button>Accept</button>
+          </div>
+        </div>
+
+        <div class="order-card">
+          <p>-Order-</p>
+          <p>-Food Name- x 1</p>
+          <p>-Food Name- x 3</p>
+          <div class="order-card-btns">
+            <button>Reject</button>
+            <button>Accept</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="queue-section">
+        <h3>Order Queue</h3>
+        <div class="order-grid">
+
+          <div class="queue-card">
+            <p>-Order-</p>
+            <p>-Food Name- x 1</p>
+            <p>-Food Name- x 3</p>
+            <p>-Order Status-</p>
+            <button>Ready</button>
+          </div>
+
+          <div class="queue-card">
+            <p>-Order-</p>
+            <p>-Food Name- x 1</p>
+            <p>-Food Name- x 3</p>
+            <p>-Order Status-</p>
+            <button>Complete</button>
+          </div>
+
+          <div class="queue-card">
+            <p>-Order-</p>
+            <p>-Food Name- x 1</p>
+            <p>-Food Name- x 3</p>
+            <p>-Order Status-</p>
+            <button>Ready</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="availability-section">
+      <h3>Menu Availability</h3>
+
+      <div class="availability-item">
+        <span>-Food Name-</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="availability-item">
+        <span>-Food Name-</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="availability-item">
+        <span>-Food Name-</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="availability-item">
+        <span>-Food Name-</span>
+        <div class="toggle"></div>
+      </div>
+      <div class="availability-item">
+        <span>-Food Name-</span>
+        <div class="toggle"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('navMenu');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+
+</body>
+</html>

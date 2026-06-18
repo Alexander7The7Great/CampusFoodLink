@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusFoodLink - Student Home</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff;
+            color: #111;
+        }
+
+        .header {
+            background: #fff;
+            text-align: center;
+            padding: 14px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 10px 16px;
+            margin: 0 10px;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: #e8d9a8;
+            border: 1px solid #bbb;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+            .nav-btn:hover {
+                background: #d4c48e;
+            }
+
+        .nav-center {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .balance-box {
+            background: #e8d9a8;
+            border: 1px solid #bbb;
+            padding: 8px 14px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .main {
+            display: grid;
+            gap: 0;
+            margin: 10px;
+            border: 1px solid #ccc;
+            place-items: center;
+        }
+
+        .order-hist-tab td {
+            padding: 5px 20px;
+        }
+  
+        
+        /* Hamburger */
+        .hamburger {
+            position: fixed;
+            top: 14px;
+            right: 16px;
+            cursor: pointer;
+            font-size: 22px;
+            z-index: 100;
+        }
+
+        .dropdown {
+            display: none;
+            position: fixed;
+            top: 44px;
+            right: 16px;
+            background: #fff;
+            border: 1px solid #ccc;
+            z-index: 100;
+            min-width: 180px;
+        }
+
+            .dropdown a {
+                display: block;
+                padding: 10px 16px;
+                font-size: 13px;
+                text-decoration: none;
+                color: #111;
+                border-bottom: 1px solid #eee;
+            }
+
+                .dropdown a:hover {
+                    background: #e8d9a8;
+                }
+    </style>
+</head>
+<body>
+
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+    <div class="dropdown" id="navMenu">
+        <a href="login.html">Login</a>
+        <a href="student-home.html">Student Home</a>
+        <a href="vendor-menu.html">Vendor Menu</a>
+        <a href="vendor-home.html">Vendor Home</a>
+        <a href="menu-management.html">Menu Management</a>
+    </div>
+
+    <div class="header">CampusFoodLink</div>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <button class="nav-btn" onclick="window.location.href='student-home.html'">Home</button>
+        </div>
+        <div class="nav-center">Order History</div>
+        <div class="nav-right">
+            <div class="balance-box">
+                <!--Access the student_profile(meal_plan_balance) to show the user their current balance-->
+                Meal Plan Balance<br />
+                -Balance-
+            </div>
+            <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <table class="order-hist-tab">
+            <tbody>
+                <!--for each recent order create a row showing the details from the order table-->
+                <tr class="previous-order">
+                    <td class="order">-Order-</td>
+                    <td class="vendor">-Vendor Name-</td>
+                    <td class="date">-date-</td>
+                    <td class="status">-status-</td>
+                </tr>
+                <!--pull each item associated with that order and create a new row for each-->
+                <tr class="food">
+                    <td></td>
+                    <td class="food-name">-Food Name- x -amount- -Food Price-</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="food">
+                    <td></td>
+                    <td class="food-name">-Food Name- x -amount- -Food Price-</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!--after all items in the order are displayed pull the order total to display as well at the end-->
+                <tr class="cost">
+                    <td></td>
+                    <td class="order-total">Total: -Order Total-</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+            function toggleMenu() {
+                const menu = document.getElementById('navMenu');
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            }
+    </script>
+
+</body>
+</html>
