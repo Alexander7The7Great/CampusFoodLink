@@ -116,31 +116,41 @@
 </head>
 <body>
 
+
     <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
     <div class="dropdown" id="navMenu">
-        <a href="login.html">Login</a>
-        <a href="student-home.html">Student Home</a>
-        <a href="vendor-menu.html">Vendor Menu</a>
-        <a href="vendor-home.html">Vendor Home</a>
-        <a href="menu-management.html">Menu Management</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
     </div>
+
+
 
     <div class="header">CampusFoodLink</div>
     <div class="page-label">Login Page</div>
+
+
 
     <div class="main">
         <div class="login-box">
             <div class="logo-area"></div>
             <h2>Sign in</h2>
-            <input type="text" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <div class="btn-row">
-                <button class="btn" onclick="window.location.href='student-home.html'">Sign in</button> <!--Access and check if user(email, password_hash) match
-                                                                                                            Access user_role(role_id, role_name) to check where to route the user-->
-                <button class="btn" onclick="window.location.href='register.html'">Register</button>
-            </div>
+            <% if (messages.error) {%>
+            <%= messages.error %>
+            <% } %>
+
+            <form action="/login" method="POST">
+                <input type="email" id="email" name="email" placeholder="Email" required="" />
+                <input type="password" id="password" name="password" placeholder="Password" required="" />
+                <div class="btn-row">
+                    <button class="btn" type="submit">Sign in</button>
+
+                    <button class="btn" onclick="window.location.href='/register'">Register</button>
+                </div>
+            </form>
         </div>
-    </div>
+     </div>
+
+
 
     <script>
         function toggleMenu() {

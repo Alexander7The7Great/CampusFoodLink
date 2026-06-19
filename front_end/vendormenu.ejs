@@ -207,75 +207,51 @@
 
   <div class="header">CampusFoodLink</div>
 
+
+
   <div class="navbar">
     <div class="nav-left">
-      <button class="nav-btn" onclick="window.location.href='student-home.html'">Home</button>
-      <button class="nav-btn" onclick="window.location.href='orderhistory.html'">Order History</button>
+      <button class="nav-btn" onclick="window.location.href='/student/home'">Home</button>
+      <button class="nav-btn" onclick="window.location.href='orderhistory'">Order History</button>
     </div>
-    <div class="nav-center">-Vendor Name- Menu</div>
+    <div class="nav-center"><%= vendorMenu.vendor_name %> Menu</div>
     <div class="nav-right">
       <div class="balance-box">
         Meal Plan Balance<br/>
-        -Balance-
+        $<%= balance.toFixed(2) %>
       </div>
-      <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+          <form action="/logout?_method=DELETE" method="POST">
+	        <button class="nav-btn" type="submit">Log Out</button>
+	      </form>
     </div>
   </div>
 
+
+
   <div class="vendor-info">
-    <p>-Vendor Name-</p>
-    <p>-Vendor Description-</p>
+    <p><%= vendorMenu.vendor_name %></p>
+    <p><%= vendorMenu.vendor_description %></p>
     <p>Estimated prep time: 9 minutes</p>
   </div>
+
+
 
   <div class="main">
     <div class="menu-section">
       <div class="menu-grid">
           <!--Pull each item in the menu of the current vendor(vendor_id) from menu_item()-->
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <button>Add to Cart</button>
-        </div>
-
+            <% vendorMenu.menuItems.forEach(item => { %>
+            <div class="menu-card">
+              <p><%= item.food_name %></p>
+              <p><%= item.food_description %></p>
+              <p>$<%= item.price.toFixed(2) %></p>
+              <button>Add to Cart</button>
+            </div>
+            <% }) %>
       </div>
     </div>
+
+
 
     <div class="order-section">
       <h3>Your Order</h3>
@@ -294,6 +270,8 @@
       <button class="submit-btn" onclick="window.location.href='student-home.html'">Submit Order</button>
     </div>
   </div>
+
+
 
   <script>
     function toggleMenu() {
