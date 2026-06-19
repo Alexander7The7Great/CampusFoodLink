@@ -212,7 +212,7 @@
   <div class="navbar">
     <div class="nav-left">
       <button class="nav-btn" onclick="window.location.href='/student/home'">Home</button>
-      <button class="nav-btn" onclick="window.location.href='orderhistory'">Order History</button>
+      <button class="nav-btn" onclick="window.location.href='/orderhistory'">Order History</button>
     </div>
     <div class="nav-center"><%= vendorMenu.vendor_name %> Menu</div>
     <div class="nav-right">
@@ -245,7 +245,7 @@
               <p><%= item.food_name %></p>
               <p><%= item.food_description %></p>
               <p>$<%= item.price.toFixed(2) %></p>
-              <button>Add to Cart</button>
+              <button onclick="addToOrder('<%= item.item_id %>', '<%= item.food_name %>', <%= item.price %>)">Add to Cart</button>
             </div>
             <% }) %>
       </div>
@@ -256,27 +256,92 @@
     <div class="order-section">
       <h3>Your Order</h3>
       <div class="order-box">
-        <div class="order-item">
-          <span>-Food Name- x 1 - -Food Price-</span>
-          <button class="remove-btn" style="color: red">X</button>
+        <div id="order-items">
+          <p style="color:#999; font-size:13px;">No items in cart.</p>
         </div>
-        <div class="order-item">
-          <span>-Food Name- x 3 - -Food Price-</span>
-          <button class="remove-btn" style="color: red">X</button>
-        </div>
-        <div class="order-total">Total = $10.00</div>
-        <p style="font-size:12px; margin-top:6px;">Available Meal Plan = -Balance-</p>
+        <div class="order-total" id="order-total">Total = $0.00</div>
+        <p style="font-size:12px; margin-top:6px;">Available Meal Plan = $<%= balance.toFixed(2) %> </p>
       </div>
-      <button class="submit-btn" onclick="window.location.href='student-home.html'">Submit Order</button>
+      <button id="orderSubmitBtn" class="submit-btn" style="display:none;" onclick="window.location.href='student-home.html'">Submit Order</button>
     </div>
   </div>
 
 
 
   <script>
+  //create client side order to store what they add to it
+    const order = [];
+
+    //add items to the cart, with their id, price, and the amount of them that they have added
+    function addToOrder(id, food, price) {
+        
+        //check to see if the item is already in the order to increase the amount of it
+        const inOrder = order.find(item => item.id === id);
+        if (inOrder) {
+            inOrder.amount++
+        } else {
+        //add 1 if it isnt already in the order
+        order.push({id, food, price, amount: 1})
+        }
+
+        //call the display order function to reflect all the changes immediately to the user
+        displayOrder();
+    }
+
+
+    //remove an item from the order
+    function removeFromOrder(id) {
+
+        //find the position of the item in the order
+        const i = order.findIndex(item => item.id ===id);
+
+            //check to see if there is more than one of the item so it can be taken off
+            if (order[i].amount > 1) {
+            order[i].amount--;
+
+            //if there is only one on the order it should be fully taken off of it
+            } else {
+              order.splice(i, 1);
+            }
+
+        displayOrder();
+    }
+
+    //show the order if there are items in it
+    function displayOrder() {
+        
+        //store the id for the targeted sections for order
+        const box = document.getElementById('order-items');
+        const totalEl = document.getElementById('order-total');
+        const orderSubmit = document.getElementById('orderSubmitBtn');
+
+        //check to see if there is anything in the cart
+        // if it is empty show that to the user
+        if (order.length === 0) {
+        box.innerHTML = '<p style="color:#999; font-size:13px;">No items in cart.</p>';
+
+        //show an 0 total when it is empty as well
+        totalEl.textContent = 'Total = $0.00';
+        orderSubmit.style.display = 'none';
+        return;
+     }
+
+        //in the section for the order map each added item out in a new div for each
+        //also calculate the total of each based on the amount added so far
+        box.innerHTML = order.map(item => 
+        `<div class="order-item">
+            <span>${item.food} x${item.amount} — $${(item.price * item.amount).toFixed(2)}</span>
+            <button class="remove-btn" onclick="removeFromOrder('${item.id}')">X</button>
+    </div>`).join('');
+    const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
+    totalEl.textContent = `Total = $${total.toFixed(2)}`;
+    orderSubmit.style.display = 'block';
+}
+
+
     function toggleMenu() {
-      const menu = document.getElementById('navMenu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        const menu = document.getElementById('navMenu');
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
   </script>
 

@@ -13,5 +13,6 @@ async function getMealPlanBalance(db, UserId) {
 
 //export the modules out for use in other files
 module.exports = {
-    getMealPlanBalance
+    getMealPlanBalance,
+    getStudentProfile
 }

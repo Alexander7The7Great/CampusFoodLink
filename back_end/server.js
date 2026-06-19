@@ -23,7 +23,7 @@ async function startServer() {
         driver: sqlite3.Database
     })
 
-    // Pass db directly — passport config handles its own queries now
+    //have passport access the database
     initializePassport(passport, db)
 
     app.set('view-engine', 'ejs')
@@ -57,7 +57,7 @@ async function startServer() {
             req.logIn(user, (err) => {
                 if (err) return next(err)
 
-                // Redirect based on role_name set in passportConfig
+                // Redirect based on role name set in passport
                 switch (user.role_name) {
                     case 'student': return res.redirect('/student/home')
                     case 'vendor': return res.redirect('/vendor/home')
