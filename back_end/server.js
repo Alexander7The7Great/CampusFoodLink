@@ -14,7 +14,8 @@ const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 const { getMealPlanBalance } = require('./mealPlanTransactionsModule')
 const { getVendors, getVendorsMenu, getVendorByID } = require('./vendorAndMenuModule')
-const { createOrder } = require('./orderManagementModule')
+const { createOrder, getActiveOrders } = require('./orderManagementModule')
+
 const initializePassport = require('./passportConfig')
 
 // Open the SQLite database once on startup and share it
@@ -73,7 +74,8 @@ async function startServer() {
     app.get('/student/home', checkAuthenticated, checkRole('student'), async (req, res) => {
         const balance = await getMealPlanBalance(db, req.user.user_id)
         const vendors = await getVendors(db)
-        res.render('studenthome.ejs', { balance, vendors })
+        const activeOrders = await getActiveOrders(db, req.user.user_id)
+        res.render('studenthome.ejs', { balance, vendors, activeOrders })
 
     })
 

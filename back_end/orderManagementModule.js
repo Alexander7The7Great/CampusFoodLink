@@ -22,4 +22,23 @@ async function createOrder(db, userId, venID, orderTotal, time, order) {
     return orderID
 }
 
-module.exports = { createOrder }
+async function getActiveOrders(db, studentId) {
+    return db.all(
+        `SELECT o.order_id, o.order_total, v.vendor_name,
+                osh.status
+         FROM "order" o
+         JOIN vendor v ON o.vendor_id = v.vendor_id
+         JOIN order_status_history osh ON osh.history_id = (
+             SELECT history_id
+             FROM order_status_history
+             WHERE order_id = o.order_id
+             ORDER BY changed_at DESC
+             LIMIT 1
+         )
+         WHERE o.student_id = ? AND osh.status != 'Ready'
+         ORDER BY osh.changed_at DESC` ,
+         [studentId]
+    )
+}
+
+module.exports = { createOrder, getActiveOrders }

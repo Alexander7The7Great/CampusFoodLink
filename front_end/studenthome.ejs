@@ -223,9 +223,16 @@
                                             and current status from order_status_history(order_id, status)-->
 				<h3>Active Order</h3>
 				<div class="order-box">
-					<p>-Order- - -Vendor Name-</p>
-					<p>-Order Total-</p>
-					<p>-Order Status-</p>
+				<% if (activeOrders.length === 0) { %>
+					<p style="color:#999;">No active orders.</p>
+				<% } else { %>
+					<% activeOrders.forEach(order => { %>
+					<p>Order #<%= order.order_id %> - <%= order.vendor_name %></p>
+					<p>Total: $<%= order.order_total.toFixed(2) %></p>
+					<p>Order Status: <%= order.status %></p>
+					<hr/>
+					<% }) %>
+					<% } %>
 				</div>
 			</div>
 		</div>
