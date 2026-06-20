@@ -10,9 +10,31 @@ async function getMealPlanBalance(db, UserId) {
     return studProf.meal_plan_balance
 }
 
+async function logTransaction(db, studentId, oldValue, newValue, time) {
+    await db.run(
+        'INSERT INTO transaction_log(student_id, old_value, new_value, timestamp) VALUES (?, ?, ?, ?)',
+        [studentId, oldValue, newValue, time]) 
+}
 
+
+//function to take from the balance of the student when orders are placed
+async function deductMealBalance(db, userId, amount, time) {
+    const studProf = await getStudentProfile(db, userId)
+    const oldValue = studProf.meal_plan_balance
+    const newValue = oldValue - amount
+
+    await db.run('UPDATE student_profile SET meal_plan_balance = ? WHERE student_id = ?',
+    [newValue, studProf.Student_id])
+
+
+    await logTransaction(db, studProf.Student_id, oldValue, newValue, time)
+
+    return { studentId: studProf.Student_id, oldValue, newValue}
+}
 //export the modules out for use in other files
 module.exports = {
     getMealPlanBalance,
-    getStudentProfile
+    getStudentProfile,
+    logTransaction,
+    deductMealBalance
 }

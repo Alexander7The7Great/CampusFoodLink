@@ -262,7 +262,12 @@
         <div class="order-total" id="order-total">Total = $0.00</div>
         <p style="font-size:12px; margin-top:6px;">Available Meal Plan = $<%= balance.toFixed(2) %> </p>
       </div>
-      <button id="orderSubmitBtn" class="submit-btn" style="display:none;" onclick="window.location.href='student-home.html'">Submit Order</button>
+      <form id="orderForm" action="/order" method="POST">
+        <input type="hidden" name="vendorId" value="<%= vendorMenu.vendor_id %>" />
+        <input type="hidden" name="orderTotal" id="orderTotalInput" />
+        <input type="hidden" name="items" id="orderItemsInput" />
+        <button id="orderSubmitBtn" class="submit-btn" type="submit" style="display:none;">Submit Order</button>
+      </form>
     </div>
   </div>
 
@@ -270,6 +275,7 @@
 
   <script>
   //create client side order to store what they add to it
+    mealPlanBal = <%= balance %>;
     const order = [];
 
     //add items to the cart, with their id, price, and the amount of them that they have added
@@ -335,14 +341,24 @@
     </div>`).join('');
     const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
     totalEl.textContent = `Total = $${total.toFixed(2)}`;
-    orderSubmit.style.display = 'block';
+    //disable the submit button once the order total goes over the 
+    orderSubmit.style.display = (total > mealPlanBal) ? 'none' : 'block';
 }
 
 
     function toggleMenu() {
         const menu = document.getElementById('navMenu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        orderSubmit.style.display = (total > mealPlanBalance) ? 'none' : 'block';
     }
+
+        document.getElementById('orderForm').addEventListener('submit', function () {
+        const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
+        document.getElementById('orderTotalInput').value = total.toFixed(2);
+
+        //only id and amount are needed server-side to insert order_item rows
+        const items = order.map(item => ({ id: item.id, amount: item.amount }));
+        document.getElementById('orderItemsInput').value = JSON.stringify(items);
+    });
   </script>
 
 </body>

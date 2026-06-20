@@ -14,6 +14,7 @@ const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 const { getMealPlanBalance } = require('./mealPlanTransactionsModule')
 const { getVendors, getVendorsMenu, getVendorByID } = require('./vendorAndMenuModule')
+const { createOrder } = require('./orderManagementModule')
 const initializePassport = require('./passportConfig')
 
 // Open the SQLite database once on startup and share it
@@ -85,6 +86,33 @@ async function startServer() {
         const balance = await getMealPlanBalance(db, req.user.user_id)
         res.render('vendormenu.ejs', { vendorMenu, balance })
     })
+
+    app.post('/order', checkAuthenticated, checkRole('student'), async (req, res) => {
+            const { vendorId, orderTotal, items } = req.body
+
+            //items arrives as a JSON string from the hidden form field;
+            //parse it back into an array of {id, amount}
+            const parsedItems = JSON.parse(items || '[]')
+
+            if (parsedItems.length === 0) {
+                req.flash('error', 'Your cart is empty')
+                return res.redirect(`/vendormenu/${vendorId}`)
+            }
+
+            await createOrder(
+                db,
+                req.user.user_id,
+                vendorId,
+                parseFloat(orderTotal),
+                new Date().toISOString(),
+                parsedItems
+            )
+
+            res.redirect('/student/home')
+     
+    })
+
+
 
 
 
