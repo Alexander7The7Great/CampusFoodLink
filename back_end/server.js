@@ -64,6 +64,8 @@ async function startServer() {
                     case 'student': return res.redirect('/student/home')
                     case 'vendor': return res.redirect('/vendor/home')
                     case 'admin': return res.redirect('/admin/home')
+
+                    //send users to the login page if they are not matched with any of the roles
                     default: return res.redirect('/login')
                 }
             })
@@ -83,20 +85,22 @@ async function startServer() {
 
     //route for directing the user to a view of the vendor's menu they want to order from
     app.get('/vendormenu/:vendorId', checkAuthenticated, checkRole('student'), async (req, res) => {
+        //take route based on the vendors id attached to the button
         const venID = req.params.vendorId
         const vendorMenu = await getVendorsMenu(db, venID)
         const balance = await getMealPlanBalance(db, req.user.user_id)
         res.render('vendormenu.ejs', { vendorMenu, balance })
     })
 
+    //take the post from the menu and run the order creation function
     app.post('/order', checkAuthenticated, checkRole('student'), async (req, res) => {
             const { vendorId, orderTotal, items } = req.body
 
             //items come back as json from the form in the page
-            const parsFood = JSON.parse(items || '[]')
+            const parsFood = JSON.parse(items)
 
             //have the create order function used for interacting with the database and taking all the gather data 
-            //to create an order filling all of the tables needed in the database
+            //to create an order filling all of the tables 
             await createOrder(
                 db,
                 req.user.user_id,

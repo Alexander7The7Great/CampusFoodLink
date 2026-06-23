@@ -55,7 +55,7 @@ function initialize(passport, db) {
                  WHERE u.user_id = ?`,
                 [id]
             )
-            //
+            
             return done(null, user)
         } catch (e) {
             return done(e)
