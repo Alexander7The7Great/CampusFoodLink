@@ -204,11 +204,15 @@
 					<% vendors.forEach(vendor => { %>
 					<div class="vendor-card">
 						<h2>
+							<!--Display the name of each vendor-->
 							<%= vendor.vendor_name %>
 						</h2>
 						<p>
+							<!--Display the description of each vendor-->
 							<%= vendor.vendor_description %>
 						</p>
+
+						<!--Button that will route the user to the page of the associated vendor based on the id-->
 						<button onclick="window.location.href='/vendormenu/<%- vendor.vendor_id %>'">View Menu</button>
 					</div>
 					<% }) %>
@@ -223,16 +227,25 @@
                                             and current status from order_status_history(order_id, status)-->
 				<h3>Active Order</h3>
 				<div class="order-box">
+
+					<!--When there are no orders for the user it will let the user know they do not have any-->
 				<% if (activeOrders.length === 0) { %>
 					<p style="color:#999;">No active orders.</p>
 				<% } else { %>
+					<!--When the user does have active order though each will be pulled and displayed-->
 					<% activeOrders.forEach(order => { %>
+
+					<!--The order id and the vendor that it is with will be shown-->
 					<p>Order #<%= order.order_id %> - <%= order.vendor_name %></p>
+
+					<!--The total cost of the order and what its current status will also be displayed directly in the section-->
 					<p>Total: $<%= order.order_total.toFixed(2) %></p>
 					<p>Order Status: <%= order.status %></p>
 					<hr/>
 					<% }) %>
 					<% } %>
+					<!--Might have to edit this to turn into a collapsible menu in case the user has a lot of orders that 
+						go far down the page-->
 				</div>
 			</div>
 		</div>

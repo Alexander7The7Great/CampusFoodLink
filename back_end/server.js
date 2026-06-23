@@ -92,24 +92,21 @@ async function startServer() {
     app.post('/order', checkAuthenticated, checkRole('student'), async (req, res) => {
             const { vendorId, orderTotal, items } = req.body
 
-            //items arrives as a JSON string from the hidden form field;
-            //parse it back into an array of {id, amount}
-            const parsedItems = JSON.parse(items || '[]')
+            //items come back as json from the form in the page
+            const parsFood = JSON.parse(items || '[]')
 
-            if (parsedItems.length === 0) {
-                req.flash('error', 'Your cart is empty')
-                return res.redirect(`/vendormenu/${vendorId}`)
-            }
-
+            //have the create order function used for interacting with the database and taking all the gather data 
+            //to create an order filling all of the tables needed in the database
             await createOrder(
                 db,
                 req.user.user_id,
                 vendorId,
                 parseFloat(orderTotal),
                 new Date().toISOString(),
-                parsedItems
+                parsFood
             )
 
+            //send the user back to home when they submit the order
             res.redirect('/student/home')
      
     })
@@ -148,7 +145,7 @@ async function startServer() {
                 [req.body.email]
             )
             if (existing) {
-                req.flash('error', 'An account with that email already exists')
+                req.flash('error', 'Email already used for an account')
                 return res.redirect('/register')
             }
 
@@ -186,7 +183,7 @@ async function startServer() {
     })
 
 
-
+    //routes users back to login when they are not logged in
     function checkAuthenticated(req, res, next) {
         if (req.isAuthenticated()) return next()
         res.redirect('/login')
@@ -194,7 +191,7 @@ async function startServer() {
 
 
 
-    //
+    //routes the users away from login and register screen when they are already logged in
     function checkNotAuthenticated(req, res, next) {
         if (req.isAuthenticated()) return res.redirect()
         next()
