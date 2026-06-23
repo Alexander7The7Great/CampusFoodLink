@@ -359,6 +359,8 @@
 
         //fill in the form with the order information, and add up the total for the final submission of the order
         document.getElementById('orderForm').addEventListener('submit', function () {
+
+        //get the total by summing up the total of the item based on the amount of each of them until they are all added to the total
         const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
         document.getElementById('orderTotalInput').value = total.toFixed(2);
 
