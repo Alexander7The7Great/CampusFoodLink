@@ -13,9 +13,12 @@ async function getVendorByID(db, venID) {
 async function getVendorsMenu(db, venID) {
     const vendor = await getVendorByID(db, venID)
     const menu = await db.all(
+        //only pull the menu items that are available as others would waste space as they do not 
+        //provide any functional benefit for being displayed
         'SELECT * FROM menu_item WHERE vendor_id = ? AND available = ?', [venID, 'Yes']
     )
 
+    //get the vendor and their available items altogether
     return {
         ...vendor,
         menuItems: menu

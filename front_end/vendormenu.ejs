@@ -262,10 +262,13 @@
         <div class="order-total" id="order-total">Total = $0.00</div>
         <p style="font-size:12px; margin-top:6px;">Available Meal Plan = $<%= balance.toFixed(2) %> </p>
       </div>
+
+
+        <!--Order submission that can post all the data from the order once the user clicks the button-->
       <form id="orderForm" action="/order" method="POST">
         <input type="hidden" name="vendorId" value="<%= vendorMenu.vendor_id %>" />
         <input type="hidden" name="orderTotal" id="orderTotalInput" />
-        <input type="hidden" name="items" id="orderItemsInput" />
+        <input type="hidden" name="items" id="foodInput" />
         <button id="orderSubmitBtn" class="submit-btn" type="submit" style="display:none;">Submit Order</button>
       </form>
     </div>
@@ -318,7 +321,7 @@
         
         //store the id for the targeted sections for order
         const box = document.getElementById('order-items');
-        const totalEl = document.getElementById('order-total');
+        const totalBox = document.getElementById('order-total');
         const orderSubmit = document.getElementById('orderSubmitBtn');
 
         //check to see if there is anything in the cart
@@ -327,7 +330,7 @@
         box.innerHTML = '<p style="color:#999; font-size:13px;">No items in cart.</p>';
 
         //show an 0 total when it is empty as well
-        totalEl.textContent = 'Total = $0.00';
+        totalBox.textContent = 'Total = $0.00';
         orderSubmit.style.display = 'none';
         return;
      }
@@ -338,26 +341,36 @@
         `<div class="order-item">
             <span>${item.food} x${item.amount} — $${(item.price * item.amount).toFixed(2)}</span>
             <button class="remove-btn" onclick="removeFromOrder('${item.id}')">X</button>
-    </div>`).join('');
-    const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
-    totalEl.textContent = `Total = $${total.toFixed(2)}`;
-    //disable the submit button once the order total goes over the 
-    orderSubmit.style.display = (total > mealPlanBal) ? 'none' : 'block';
+            </div>`).join('');
+
+        //add up the price of every item and the amount of them
+        const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
+        totalBox.textContent = `Total = $${total.toFixed(2)}`;
+
+        //disable the submit button once the order total goes over the current meal plan balance
+        orderSubmit.style.display = (total > mealPlanBal) ? 'none' : 'block';
 }
 
-
+    //hamburger navigation menu opening and closing
     function toggleMenu() {
         const menu = document.getElementById('navMenu');
-        orderSubmit.style.display = (total > mealPlanBalance) ? 'none' : 'block';
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
 
+        //fill in the form with the order information, and add up the total for the final submission of the order
         document.getElementById('orderForm').addEventListener('submit', function () {
+
+        //get the total by summing up the total of the item based on the amount of each of them until they are all added to the total
         const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
         document.getElementById('orderTotalInput').value = total.toFixed(2);
 
-        //only id and amount are needed server-side to insert order_item rows
+        //map the id and amount of an item to an array to be pushed into the order item table alongside the associated order
+
         const items = order.map(item => ({ id: item.id, amount: item.amount }));
-        document.getElementById('orderItemsInput').value = JSON.stringify(items);
+
+
+        //store it as json
+        document.getElementById('foodInput').value = JSON.stringify(items);
     });
   </script>
 
