@@ -144,11 +144,11 @@ async function startServer() {
     app.post('/register', checkNotAuthenticated, async (req, res) => {
         try {
             // Check if email is already registered
-            const existing = await db.get(
+            const existsAlready = await db.get(
                 'SELECT user_id FROM "user" WHERE email = ?',
                 [req.body.email]
             )
-            if (existing) {
+            if (existsAlready) {
                 req.flash('error', 'Email already used for an account')
                 return res.redirect('/register')
             }

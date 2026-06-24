@@ -345,7 +345,11 @@
 
         //add up the price of every item and the amount of them
         const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
-        totalBox.textContent = `Total = $${total.toFixed(2)}`;
+
+        //let the user know when the order is over their balance
+        if (total > mealPlanBal) {
+            totalBox.textContent = `Total = $${total.toFixed(2)}. This is over your balanace`;
+        } else { totalBox.textContent = `Total = $${total.toFixed(2)}`; }
 
         //disable the submit button once the order total goes over the current meal plan balance
         orderSubmit.style.display = (total > mealPlanBal) ? 'none' : 'block';
@@ -362,14 +366,18 @@
 
         //get the total by summing up the total of the item based on the amount of each of them until they are all added to the total
         const total = order.reduce((sum, item) => sum + item.price * item.amount, 0);
-        document.getElementById('orderTotalInput').value = total.toFixed(2);
+            document.getElementById('orderTotalInput').value = total.toFixed(2);
 
+            if (total > mealPlanBal) {
+                event.preventDefault();
+                
+            }
         //map the id and amount of an item to an array to be pushed into the order item table alongside the associated order
 
         const items = order.map(item => ({ id: item.id, amount: item.amount }));
 
 
-        //store it as json
+        //store the food that was submitted from the order as json so rows can be created for each of them in the order item table
         document.getElementById('foodInput').value = JSON.stringify(items);
     });
   </script>
