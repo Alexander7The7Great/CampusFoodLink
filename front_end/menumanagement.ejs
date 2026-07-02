@@ -218,20 +218,16 @@
 
   <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   <div class="dropdown" id="navMenu">
-    <a href="login.html">Login</a>
-    <a href="student-home.html">Student Home</a>
-    <a href="vendor-menu.html">Vendor Menu</a>
-    <a href="vendor-home.html">Vendor Home</a>
-    <a href="menu-management.html">Menu Management</a>
+    <a href="/vendor/home">Vendor Home</a>
   </div>
 
   <div class="header">CampusFoodLink</div>
 
   <div class="navbar">
     <div class="nav-left">
-      <button class="nav-btn" onclick="window.location.href='vendor-home.html'">Home</button>
+      <button class="nav-btn" onclick="window.location.href='/vendor/home'">Home</button>
     </div>
-    <div class="nav-center">-Vendor Name- Menu Management</div>
+    <div class="nav-center"><%= vendorMenu.vendor_name %> Menu Management</div>
     <div class="nav-right">
       <div class="total-box">
         Total Menu Items<br/>
@@ -246,10 +242,11 @@
       <h3>Menu</h3>
       <div class="menu-grid">
 
+        <% vendorMenu.menuItems.forEach(item => { %>
         <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
+          <p><%= item.food_name %></p>
+          <p><%= item.food_description %></p>
+          <p>$<%= item.price %></p>
           <div class="available-row">
             <span>Available</span>
             <div class="toggle"></div> <!--Quick switch for updating if food is available in the menu-->
@@ -260,76 +257,7 @@
             <button>Delete</button> <!--Remove a food from the menu-->
           </div>
         </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div>
-          </div>
-          <div class="card-btns">
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div>
-          </div>
-          <div class="card-btns">
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div>
-          </div>
-          <div class="card-btns">
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div>
-          </div>
-          <div class="card-btns">
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
-        </div>
-
-        <div class="menu-card">
-          <p>-Food Name-</p>
-          <p>-Food Description-</p>
-          <p>-Food Price-</p>
-          <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div>
-          </div>
-          <div class="card-btns">
-            <button>Edit</button>
-            <button>Delete</button>
-          </div>
-        </div>
+        <% }) %>
 
       </div>
     </div>
@@ -360,7 +288,8 @@
     function toggleMenu() {
       const menu = document.getElementById('navMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
+      }
+      const totalItems = vendorMenu.length();
   </script>
 
 </body>

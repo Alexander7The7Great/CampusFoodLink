@@ -45,4 +45,74 @@ async function getActiveOrders(db, studentId) {
     )
 }
 
-module.exports = { createOrder, getActiveOrders }
+
+//pull the orders that are currently pending
+async function getIncomingOrders(db, venID) {
+    const orders = await db.all(
+        `SELECT o.order_id, o.order_total, o.time_created,
+                osh.status
+         FROM "order" o
+         JOIN order_status_history osh ON osh.history_id = (
+             SELECT history_id
+             FROM order_status_history
+             WHERE order_id = o.order_id
+             ORDER BY changed_at DESC
+             LIMIT 1
+         )
+         WHERE o.vendor_id = ? AND osh.status = 'Pending'
+         ORDER BY o.time_created ASC` ,
+        [venID]
+    )
+
+
+    //pull the items that are associated with each order
+    //This could help the vendor decide if they should accept the order
+    for (const order of orders) {
+        order.food = await db.all(
+            `SELECT mi.food_name, oi.amount
+             FROM order_item oi
+             JOIN menu_item mi ON mi.item_id = oi.item_id
+             WHERE oi.order_id = ?`,
+            [order.order_id]
+        )
+
+
+    }
+    return orders
+}
+
+async function getOrderQueue(db, venID) {
+    const orders = await db.all(
+        `SELECT o.order_id, o.order_total, o.time_created,
+                osh.status
+         FROM "order" o
+         JOIN order_status_history osh ON osh.history_id = (
+             SELECT history_id
+             FROM order_status_history
+             WHERE order_id = o.order_id
+             ORDER BY changed_at DESC
+             LIMIT 1
+         )
+         WHERE o.vendor_id = ? AND osh.status IN ('Preparing', 'Ready')
+         ORDER BY o.time_created ASC` ,
+        [venID]
+    )
+
+
+    //pull the items that are associated with each order
+    //This could help the vendor decide if they should accept the order
+    for (const order of orders) {
+        order.food = await db.all(
+            `SELECT mi.food_name, oi.amount
+             FROM order_item oi
+             JOIN menu_item mi ON mi.item_id = oi.item_id
+             WHERE oi.order_id = ?`,
+            [order.order_id]
+        )
+
+
+    }
+    return orders
+}
+
+module.exports = { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue }

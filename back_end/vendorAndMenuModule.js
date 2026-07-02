@@ -2,7 +2,10 @@
 async function getVendors(db) {
     return db.all('SELECT * FROM vendor')
 }
-
+async function getVendorID(db, userID) {
+    return db.get('SELECT vendor_id FROM vendor WHERE user_id = ?',
+    [userID])
+}
 //gets a specific vendor based on their id
 async function getVendorByID(db, venID) {
     return db.get('SELECT * FROM vendor WHERE vendor_id = ?',
@@ -25,8 +28,30 @@ async function getVendorsMenu(db, venID) {
     }
 }
 
+
+async function getMenuForVendor(db, venID) {
+    const vendor = await getVendorByID(db, venID)
+    const menu = await db.all(
+        //Pull all the items on the menu for the vendor to see and change
+        'SELECT * FROM menu_item WHERE vendor_id = ?', [venID]
+    )
+
+    //get the vendor and their available items altogether
+    return {
+        ...vendor,
+        menuItems: menu
+    }
+}
+
+async function updateAvailability(db, itemID, available) {
+    return db.run('UPDATE menu_item SET available = ? WHERE item_id = ?', [available, itemID])
+}
+
+
 module.exports = {
     getVendors,
+    getVendorID,
     getVendorsMenu,
-    getVendorByID
+    getVendorByID,
+    getMenuForVendor
 }

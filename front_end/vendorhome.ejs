@@ -168,6 +168,11 @@
       border-radius: 10px;
       position: relative;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on {
+        background: #4caf50;
     }
 
     .toggle::after {
@@ -179,6 +184,7 @@
       border-radius: 50%;
       top: 3px;
       right: 3px;
+      transition: left 0.2s;
     }
 
     /* Hamburger */
@@ -189,6 +195,10 @@
       cursor: pointer;
       font-size: 22px;
       z-index: 100;
+    }
+
+    .toggle.on::after {
+        left: 19px;
     }
 
     .dropdown {
@@ -218,126 +228,83 @@
 
   <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   <div class="dropdown" id="navMenu">
-    <a href="login.html">Login</a>
-    <a href="student-home.html">Student Home</a>
-    <a href="vendor-menu.html">Vendor Menu</a>
-    <a href="vendor-home.html">Vendor Home</a>
-    <a href="menu-management.html">Menu Management</a>
+    <a href="/menumanagement">Menu Management</a>
   </div>
 
   <div class="header">CampusFoodLink</div>
 
   <div class="navbar">
     <div class="nav-left">
-      <button class="nav-btn" onclick="window.location.href='menu-management.html'">Menu Management</button>
+      <button class="nav-btn" onclick="window.location.href='/menumanagement'">Menu Management</button>
     </div>
-    <div class="nav-center">-Vendor Name- Home</div>
+    <div class="nav-center"><%= vendorMenu.vendor_name %></div>
     <div class="nav-right">
-      <div class="active-box">
-        Total Active Orders<br/>
-        3
-      </div>
-      <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+        <div class="active-box">
+            Total Active Orders<br />
+            3
+        </div>
+        <form action="/logout?_method=DELETE" method="POST">
+            <button class="nav-btn" type="submit">Log Out</button>
+        </form>
     </div>
   </div>
 
   <div class="main">
     <div class="orders-section">
 
+
+
       <h3>Incoming Orders</h3>
       <div class="order-grid">
-
+        <% newOrders.forEach(order => { %>
         <div class="order-card">
-          <p>-Order-</p>
-          <p>-Food Name- x 1</p>
-          <p>-Food Name- x 3</p>
+          <p>Order #<%= order.order_id %></p>
+            <% order.food.forEach(item => { %>
+          <p><%= item.food_name %> x <%= item.amount %></p>
+            <% }) %>
           <div class="order-card-btns">
             <button>Reject</button>
             <button>Accept</button>
           </div>
         </div>
-
-        <div class="order-card">
-          <p>-Order-</p>
-          <p>-Food Name- x 1</p>
-          <p>-Food Name- x 3</p>
-          <div class="order-card-btns">
-            <button>Reject</button>
-            <button>Accept</button>
-          </div>
-        </div>
-
-        <div class="order-card">
-          <p>-Order-</p>
-          <p>-Food Name- x 1</p>
-          <p>-Food Name- x 3</p>
-          <div class="order-card-btns">
-            <button>Reject</button>
-            <button>Accept</button>
-          </div>
-        </div>
-
+          <% }) %>
       </div>
+
+
 
       <div class="queue-section">
         <h3>Order Queue</h3>
         <div class="order-grid">
-
+         <% orderQueue.forEach(order => { %>
           <div class="queue-card">
-            <p>-Order-</p>
-            <p>-Food Name- x 1</p>
-            <p>-Food Name- x 3</p>
-            <p>-Order Status-</p>
+            <p>Order #<%= order.order_id %></p>
+              <% order.food.forEach(item => { %>
+            <p><%= item.food_name %> x <%=item.amount %></p>
+              <% }) %>
+            <p> <%= order.status %></p>
             <button>Ready</button>
           </div>
-
-          <div class="queue-card">
-            <p>-Order-</p>
-            <p>-Food Name- x 1</p>
-            <p>-Food Name- x 3</p>
-            <p>-Order Status-</p>
-            <button>Complete</button>
-          </div>
-
-          <div class="queue-card">
-            <p>-Order-</p>
-            <p>-Food Name- x 1</p>
-            <p>-Food Name- x 3</p>
-            <p>-Order Status-</p>
-            <button>Ready</button>
-          </div>
-
+          <% }) %>
         </div>
       </div>
 
+
+
     </div>
+
+
 
     <div class="availability-section">
       <h3>Menu Availability</h3>
-
+      <% vendorMenu.menuItems.forEach(item => {%>
       <div class="availability-item">
-        <span>-Food Name-</span>
+        <span><%=item.food_name %></span>
         <div class="toggle"></div>
-      </div>
-      <div class="availability-item">
-        <span>-Food Name-</span>
-        <div class="toggle"></div>
-      </div>
-      <div class="availability-item">
-        <span>-Food Name-</span>
-        <div class="toggle"></div>
-      </div>
-      <div class="availability-item">
-        <span>-Food Name-</span>
-        <div class="toggle"></div>
-      </div>
-      <div class="availability-item">
-        <span>-Food Name-</span>
-        <div class="toggle"></div>
-      </div>
-
     </div>
+        <% }) %>
   </div>
+
+
 
   <script>
     function toggleMenu() {

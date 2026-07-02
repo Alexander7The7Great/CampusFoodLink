@@ -13,8 +13,8 @@ const methodOverride = require('method-override')
 const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 const { getMealPlanBalance } = require('./mealPlanTransactionsModule')
-const { getVendors, getVendorsMenu, getVendorByID } = require('./vendorAndMenuModule')
-const { createOrder, getActiveOrders } = require('./orderManagementModule')
+const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor } = require('./vendorAndMenuModule')
+const { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue } = require('./orderManagementModule')
 
 const initializePassport = require('./passportConfig')
 
@@ -94,25 +94,25 @@ async function startServer() {
 
     //take the post from the menu and run the order creation function
     app.post('/order', checkAuthenticated, checkRole('student'), async (req, res) => {
-            const { vendorId, orderTotal, items } = req.body
+        const { vendorId, orderTotal, items } = req.body
 
-            //items come back as json from the form in the page
-            const parsFood = JSON.parse(items)
+        //items come back as json from the form in the page
+        const parsFood = JSON.parse(items)
 
-            //have the create order function used for interacting with the database and taking all the gather data 
-            //to create an order filling all of the tables 
-            await createOrder(
-                db,
-                req.user.user_id,
-                vendorId,
-                parseFloat(orderTotal),
-                new Date().toISOString(),
-                parsFood
-            )
+        //have the create order function used for interacting with the database and taking all the gather data 
+        //to create an order filling all of the tables 
+        await createOrder(
+            db,
+            req.user.user_id,
+            vendorId,
+            parseFloat(orderTotal),
+            new Date().toISOString(),
+            parsFood
+        )
 
-            //send the user back to home when they submit the order
-            res.redirect('/student/home')
-     
+        //send the user back to home when they submit the order
+        res.redirect('/student/home')
+
     })
 
 
@@ -120,12 +120,19 @@ async function startServer() {
 
 
     //route for users that are vendors
-    app.get('/vendor/home', checkAuthenticated, checkRole('vendor'), (req, res) => {
-        res.render('vendorhome.ejs')
+    app.get('/vendor/home', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const venID = await getVendorID(db, req.user.user_id)
+        const vendorMenu = await getMenuForVendor(db, venID.vendor_id)
+        const newOrders = await getIncomingOrders(db, venID.vendor_id)
+        const orderQueue = await getOrderQueue(db, venID.vendor_id)
+        res.render('vendorhome.ejs', { vendorMenu, newOrders, orderQueue })
     })
 
-
-
+    app.get('/menumanagement', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const venID = await getVendorID(db, req.user.user_id)
+        const vendorMenu = await getMenuForVendor(db, venID.vendor_id)
+        res.render('menumanagement.ejs', { vendorMenu })
+    })
     //route to direct the user to the admin home if they are an authenticated admin user
     app.get('/admin/home', checkAuthenticated, checkRole('admin'), (req, res) => {
         res.render('adminhome.ejs')
@@ -218,7 +225,7 @@ async function startServer() {
     }
 
     //
-    app.listen(3000)
+    app.listen(3000, '0.0.0.0');
 }
 
 startServer()

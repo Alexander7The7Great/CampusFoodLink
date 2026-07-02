@@ -31,6 +31,7 @@ A mobile-friendly campus dining platform for ordering food from campus vendors.
 You can log in with a sample account:
 -Email: Jake.torres@university.edu
 -Password: Hashed_pw_1
+(or any account included in the sample data)
 
 ## How it Works
 CampusFoodLink uses Node.js, Express, and SQLite. Students log in, browse vendor menus, add items to their cart, and place orders. 
