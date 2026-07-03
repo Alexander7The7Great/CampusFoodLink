@@ -10,6 +10,8 @@ async function getMealPlanBalance(db, UserId) {
     return studProf.meal_plan_balance
 }
 
+
+
 //create a row in the transactions logs table showing the change in the balance (We can also use this for adding
 //balances into the student account later)
 async function logTransaction(db, studentId, oldValue, newValue, time) {
@@ -17,6 +19,7 @@ async function logTransaction(db, studentId, oldValue, newValue, time) {
         'INSERT INTO transaction_log(student_id, old_value, new_value, timestamp) VALUES (?, ?, ?, ?)',
         [studentId, oldValue, newValue, time]) 
 }
+
 
 
 //function to take from the balance of the student when orders are placed (We can have this do the opposite
@@ -36,11 +39,28 @@ async function deductMealBalance(db, userId, amount, time) {
     return { studentId: studProf.Student_id }
     }
 
+//function to add more to the meal plan balance either when orders are rejected, or admin
+//adds more to it
+async function addMealBalance(db, studentId, amount, time) {
+    const studProf = await db.get('SELECT * FROM student_profile WHERE student_id = ?',
+        [studentId])
+
+    const oldValue = studProf.meal_plan_balance
+    const newValue = oldValue + amount
+
+    await db.run('UPDATE student_profile SET meal_plan_balance = ? WHERE student_id = ?',
+        [newValue, studentId])
+
+
+    await logTransaction(db, studentId, oldValue, newValue, time)
+}
+
 
 //export the modules out for use in other files
 module.exports = {
     getMealPlanBalance,
     getStudentProfile,
     logTransaction,
-    deductMealBalance
+    deductMealBalance, 
+    addMealBalance
 }

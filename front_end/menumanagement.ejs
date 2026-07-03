@@ -229,11 +229,13 @@
     </div>
     <div class="nav-center"><%= vendorMenu.vendor_name %> Menu Management</div>
     <div class="nav-right">
-      <div class="total-box">
-        Total Menu Items<br/>
-        6
-      </div>
-      <button class="nav-btn" onclick="window.location.href='login.html'">Log Out</button>
+        <div class="total-box">
+            Total Menu Items<br />
+            6
+        </div>
+        <form action="/logout?_method=DELETE" method="POST">
+            <button class="nav-btn" type="submit">Log Out</button>
+        </form>
     </div>
   </div>
 
@@ -289,7 +291,7 @@
       const menu = document.getElementById('navMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       }
-      const totalItems = vendorMenu.length();
+      const totalItems = vendorMenu.menuItems.length();
   </script>
 
 </body>

@@ -263,8 +263,16 @@
           <p><%= item.food_name %> x <%= item.amount %></p>
             <% }) %>
           <div class="order-card-btns">
-            <button>Reject</button>
-            <button>Accept</button>
+              <form action="/vendor/order/reject" class="order-card-btns" method="POST">
+                  <input type="hidden" name="orderId" value="<%= order.order_id %>">
+                  <input type="hidden" name="studentId" value="<%= order.student_id %>">
+                  <input type="hidden" name="orderTotal" value="<%= order.order_total %>">
+                  <button type="submit">Reject</button>
+              </form>
+              <form action="/vendor/order/accept" method="POST" class="order-card-btns">
+                  <input type="hidden" name="orderId" value="<%= order.order_id %>">
+                  <button type="submit">Accept</button>
+              </form>
           </div>
         </div>
           <% }) %>

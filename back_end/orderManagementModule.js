@@ -1,5 +1,5 @@
 //will need to pull the deduct function in order to have the amount taken from the account and a transaction log created along with it
-const { deductMealBalance } = require('./mealPlanTransactionsModule')
+const { deductMealBalance, addMealBalance } = require('./mealPlanTransactionsModule')
 
 //create the order with the associated status, order items, and transaction log.
 async function createOrder(db, userId, venID, orderTotal, time, order) {
@@ -22,8 +22,18 @@ async function createOrder(db, userId, venID, orderTotal, time, order) {
     }
 
     //create the initial order status row with the starting pending status
+    await updateOrderStatus(db, orderID, 'Pending', time)
+}
+
+
+async function rejectOrder(db, orderID, studentId, amount, time) {
+    await addMealBalance(db, studentId, amount, time)
+    await updateOrderStatus(db, orderID, 'Rejected', time)
+}
+
+async function updateOrderStatus(db, orderID, status, time) {
     await db.run('INSERT INTO order_status_history (order_id, status, changed_at) VALUES (?, ?, ?)',
-        [orderID, 'Pending', time])
+    [orderID, status, time])
 }
 
 async function getActiveOrders(db, studentId) {
@@ -49,7 +59,7 @@ async function getActiveOrders(db, studentId) {
 //pull the orders that are currently pending
 async function getIncomingOrders(db, venID) {
     const orders = await db.all(
-        `SELECT o.order_id, o.order_total, o.time_created,
+        `SELECT o.order_id, o.student_id, o.order_total, o.time_created,
                 osh.status
          FROM "order" o
          JOIN order_status_history osh ON osh.history_id = (
@@ -115,4 +125,7 @@ async function getOrderQueue(db, venID) {
     return orders
 }
 
-module.exports = { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue }
+module.exports = {
+    createOrder, rejectOrder, getActiveOrders,
+    getIncomingOrders, getOrderQueue, updateOrderStatus
+}

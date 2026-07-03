@@ -14,7 +14,7 @@ const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 const { getMealPlanBalance } = require('./mealPlanTransactionsModule')
 const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor } = require('./vendorAndMenuModule')
-const { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue } = require('./orderManagementModule')
+const { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue, updateOrderStatus, rejectOrder } = require('./orderManagementModule')
 
 const initializePassport = require('./passportConfig')
 
@@ -126,6 +126,22 @@ async function startServer() {
         const newOrders = await getIncomingOrders(db, venID.vendor_id)
         const orderQueue = await getOrderQueue(db, venID.vendor_id)
         res.render('vendorhome.ejs', { vendorMenu, newOrders, orderQueue })
+    })
+
+    app.post('/vendor/order/accept', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { orderId } = req.body;
+        const time = new Date().toISOString();
+        await updateOrderStatus(db, orderId, 'Preparing', time);
+
+        res.redirect('/vendor/home');
+    })
+
+    app.post('/vendor/order/reject', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { orderId, studentId, orderTotal } = req.body;
+        const time = new Date().toISOString();
+        await rejectOrder(db, orderId, studentId, parseFloat(orderTotal), time);
+
+        res.redirect('/vendor/home');
     })
 
     app.get('/menumanagement', checkAuthenticated, checkRole('vendor'), async (req, res) => {
