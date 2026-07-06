@@ -43,15 +43,40 @@ async function getMenuForVendor(db, venID) {
     }
 }
 
+
+//update the availability of items with by their id
 async function updateAvailability(db, itemID, available) {
     return db.run('UPDATE menu_item SET available = ? WHERE item_id = ?', [available, itemID])
 }
 
+//delete food that is on the menu from the database.
+async function deleteMenuItem(db, itemID, venID) {
+    return db.run('DELETE FROM menu_item WHERE item_id = ? AND vendor_id = ?',
+    [itemID, venID])
+}
+
+
+//use fields from the page to add a new item to the menu
+async function addMenuItem(db, venID, foodName, foodDescrip, price) {
+    return db.run('INSERT INTO menu_item (vendor_id, food_name, food_description, price, available) VALUES (?, ?, ?, ?, ?)',
+    [venID, foodName, foodDescrip, price, 'Yes'])
+}
+
+
+//update food to change prices or description or names of them when needed
+async function updateMenuItem(db, itemID, venID, foodName, foodDescrip, price) {
+    return db.run('UPDATE menu_item SET food_name = ?, food_description = ?, price = ? WHERE item_id = ? AND vendor_id = ? ',
+    [foodName, foodDescrip, price, itemID, venID])
+}
 
 module.exports = {
     getVendors,
     getVendorID,
     getVendorsMenu,
     getVendorByID,
-    getMenuForVendor
+    getMenuForVendor,
+    updateAvailability,
+    deleteMenuItem,
+    updateMenuItem,
+    addMenuItem
 }

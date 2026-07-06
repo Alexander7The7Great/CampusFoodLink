@@ -105,10 +105,17 @@
     .toggle {
       width: 36px;
       height: 20px;
+      border:none;
+      padding: 0;
       background: #333;
       border-radius: 10px;
       position: relative;
       cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle.on {
+        background: #4caf50;
     }
 
     .toggle::after {
@@ -120,6 +127,15 @@
       border-radius: 50%;
       top: 3px;
       right: 3px;
+      transition: left 0.2s;
+    }
+
+    .toggle.on::after {
+        left: 19px;
+    }
+
+    .change-btns {
+        height: 100%;
     }
 
     .card-btns {
@@ -239,27 +255,41 @@
     </div>
   </div>
 
+
+
   <div class="main">
     <div class="menu-section"> <!--Pull each item from the menu_item table to display to the vendor and allow for quick changes-->
       <h3>Menu</h3>
       <div class="menu-grid">
+
+
 
         <% vendorMenu.menuItems.forEach(item => { %>
         <div class="menu-card">
           <p><%= item.food_name %></p>
           <p><%= item.food_description %></p>
           <p>$<%= item.price %></p>
+         <div class="change-btns">
           <div class="available-row">
-            <span>Available</span>
-            <div class="toggle"></div> <!--Quick switch for updating if food is available in the menu-->
-
+              <span>Available</span>
+              <form action="/menumngt/availability/" method="POST">
+                  <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                  <input type="hidden" name="available" value="<%= item.available === 'Yes' ? 'No' : 'Yes' %>">
+                  <button type="submit" class="toggle <%= item.available === 'Yes' ? 'on' : '' %>"></button>
+              </form>
           </div>
           <div class="card-btns">
             <button>Edit</button>  <!--Update details on specific food on the menu-->
-            <button>Delete</button> <!--Remove a food from the menu-->
+            <form action="menumngt/delete" method="POST">
+                <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                <input type="hidden" name="venID"  value="<%= vendorMenu.vendor_id %>">
+                <button type="submit">Delete</button>
+                </form> <!--Remove a food from the menu-->
           </div>
+         </div>
         </div>
         <% }) %>
+
 
       </div>
     </div>
@@ -291,7 +321,6 @@
       const menu = document.getElementById('navMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       }
-      const totalItems = vendorMenu.menuItems.length();
   </script>
 
 </body>

@@ -11,7 +11,6 @@ async function getMealPlanBalance(db, UserId) {
 }
 
 
-
 //create a row in the transactions logs table showing the change in the balance (We can also use this for adding
 //balances into the student account later)
 async function logTransaction(db, studentId, oldValue, newValue, time) {

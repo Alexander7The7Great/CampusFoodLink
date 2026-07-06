@@ -91,6 +91,9 @@ async function getIncomingOrders(db, venID) {
     return orders
 }
 
+
+//pull the orders that are either in the prepare or ready status so they can be tracked in the order queue
+//the vendor can then quickly update them to the next status in the vendor home
 async function getOrderQueue(db, venID) {
     const orders = await db.all(
         `SELECT o.order_id, o.order_total, o.time_created,

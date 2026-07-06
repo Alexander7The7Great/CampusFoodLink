@@ -12,10 +12,12 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
-const { getMealPlanBalance } = require('./mealPlanTransactionsModule')
-const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor } = require('./vendorAndMenuModule')
-const { createOrder, getActiveOrders, getIncomingOrders, getOrderQueue, updateOrderStatus, rejectOrder } = require('./orderManagementModule')
-
+const { getMealPlanBalance, addMealBalance } = require('./mealPlanTransactionsModule')
+const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor,
+    updateAvailability, deleteMenuItem } = require('./vendorAndMenuModule')
+const { createOrder, getActiveOrders, getIncomingOrders,
+    getOrderQueue, updateOrderStatus, rejectOrder } = require('./orderManagementModule')
+const { getAllStudents } = require('./accountManagement')
 const initializePassport = require('./passportConfig')
 
 // Open the SQLite database once on startup and share it
@@ -40,37 +42,6 @@ async function startServer() {
     app.use(passport.initialize())
     app.use(passport.session())
     app.use(methodOverride('_method'))
-
-    app.get('/login', checkNotAuthenticated, (req, res) => {
-        res.render('login.ejs')
-    })
-
-
-
-    //post the information gained in the login page
-    app.post('/login', checkNotAuthenticated, (req, res, next) => {
-        passport.authenticate('local', (err, user, info) => {
-            if (err) return next(err)
-            if (!user) {
-                req.flash('error', info.message)
-                return res.redirect('/login')
-            }
-
-            req.logIn(user, (err) => {
-                if (err) return next(err)
-
-                // Redirect based on role name set in passport
-                switch (user.role_name) {
-                    case 'student': return res.redirect('/student/home')
-                    case 'vendor': return res.redirect('/vendor/home')
-                    case 'admin': return res.redirect('/admin/home')
-
-                    //send users to the login page if they are not matched with any of the roles
-                    default: return res.redirect('/login')
-                }
-            })
-        })(req, res, next)
-    })
 
     //route for the student users to their home and provides the active orders and menus to choose from
     app.get('/student/home', checkAuthenticated, checkRole('student'), async (req, res) => {
@@ -117,7 +88,7 @@ async function startServer() {
 
 
 
-
+    //-------------------VENDOR____ROUTES---------------------
 
     //route for users that are vendors
     app.get('/vendor/home', checkAuthenticated, checkRole('vendor'), async (req, res) => {
@@ -128,6 +99,9 @@ async function startServer() {
         res.render('vendorhome.ejs', { vendorMenu, newOrders, orderQueue })
     })
 
+
+
+    //post for acceptings orders and setting their status as preparing
     app.post('/vendor/order/accept', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         const { orderId } = req.body;
         const time = new Date().toISOString();
@@ -135,11 +109,34 @@ async function startServer() {
 
         res.redirect('/vendor/home');
     })
-
+    //post to add funds back to the student, set the order status to rejected
     app.post('/vendor/order/reject', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         const { orderId, studentId, orderTotal } = req.body;
         const time = new Date().toISOString();
         await rejectOrder(db, orderId, studentId, parseFloat(orderTotal), time);
+
+        res.redirect('/vendor/home');
+    })
+
+    app.post('/vendor/order/ready', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { orderId } = req.body;
+        const time = new Date().toISOString();
+        await updateOrderStatus(db, orderId, 'Ready', time);
+
+        res.redirect('/vendor/home');
+    })
+
+    app.post('/vendor/order/complete', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { orderId } = req.body;
+        const time = new Date().toISOString();
+        await updateOrderStatus(db, orderId, 'Complete', time);
+
+        res.redirect('/vendor/home');
+    })
+
+    app.post('/vendor/menu/availability', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { itemId, available } = req.body;
+        await updateAvailability(db, itemId, available);
 
         res.redirect('/vendor/home');
     })
@@ -149,9 +146,82 @@ async function startServer() {
         const vendorMenu = await getMenuForVendor(db, venID.vendor_id)
         res.render('menumanagement.ejs', { vendorMenu })
     })
+
+    app.post('/menumngt/availability', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { itemId, available } = req.body;
+        await updateAvailability(db, itemId, available);
+
+        res.redirect('/menumanagement');
+    })
+
+    app.post('/menumngt/delete', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { itemId, venID } = req.body;
+        await deleteMenuItem(db, itemId, venID);
+
+        res.redirect('/menumanagement')
+    })
+    //--------------------VENDOR____ROUTES-----------------------
+
+
+
+
+
+    //--------------------ADMIN____ROUTES-------------------------
+
     //route to direct the user to the admin home if they are an authenticated admin user
-    app.get('/admin/home', checkAuthenticated, checkRole('admin'), (req, res) => {
-        res.render('adminhome.ejs')
+    app.get('/admin/home', checkAuthenticated, checkRole('admin'), async (req, res) => {
+
+        const students = await getAllStudents(db);
+        res.render('adminhome.ejs', { students })
+    })
+
+    app.post('/admin/addbal', checkAuthenticated, checkRole('admin'), async (req, res) => {
+        console.log(req.body);
+        const { studentId, amount } = req.body;
+
+        const time = new Date().toISOString();
+        await addMealBalance(db, studentId, parseFloat(amount), time)
+
+        res.redirect('/admin/home')
+    })
+
+    //--------------------ADMIN____ROUTES-------------------------------------
+
+
+
+
+    //--------------------LOGIN/REGISTER____ROUTES-------------------------
+
+
+    app.get('/login', checkNotAuthenticated, (req, res) => {
+        res.render('login.ejs')
+    })
+
+
+
+    //post the information gained in the login page
+    app.post('/login', checkNotAuthenticated, (req, res, next) => {
+        passport.authenticate('local', (err, user, info) => {
+            if (err) return next(err)
+            if (!user) {
+                req.flash('error', info.message)
+                return res.redirect('/login')
+            }
+
+            req.logIn(user, (err) => {
+                if (err) return next(err)
+
+                // Redirect based on role name set in passport
+                switch (user.role_name) {
+                    case 'student': return res.redirect('/student/home')
+                    case 'vendor': return res.redirect('/vendor/home')
+                    case 'admin': return res.redirect('/admin/home')
+
+                    //send users to the login page if they are not matched with any of the roles
+                    default: return res.redirect('/login')
+                }
+            })
+        })(req, res, next)
     })
 
 
@@ -209,6 +279,7 @@ async function startServer() {
         })
     })
 
+    //--------------------LOGIN/REGISTER____ROUTES---------------------------------------
 
     //routes users back to login when they are not logged in
     function checkAuthenticated(req, res, next) {
@@ -220,7 +291,7 @@ async function startServer() {
 
     //routes the users away from login and register screen when they are already logged in
     function checkNotAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) return res.redirect()
+        if (req.isAuthenticated()) return res.redirect('/')
         next()
     }
 
