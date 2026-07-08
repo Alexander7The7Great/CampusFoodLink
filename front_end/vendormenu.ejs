@@ -198,11 +198,8 @@
 
   <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
   <div class="dropdown" id="navMenu">
-    <a href="login.html">Login</a>
-    <a href="student-home.html">Student Home</a>
-    <a href="vendor-menu.html">Vendor Menu</a>
-    <a href="vendor-home.html">Vendor Home</a>
-    <a href="menu-management.html">Menu Management</a>
+      <a href="/student/home">Student Home</a>
+      <a href="/orderhistory">Order History</a>
   </div>
 
   <div class="header">CampusFoodLink</div>
@@ -217,8 +214,7 @@
     <div class="nav-center"><%= vendorMenu.vendor_name %> Menu</div>
     <div class="nav-right">
       <div class="balance-box">
-        Meal Plan Balance<br/>
-        $<%= balance.toFixed(2) %>
+        Meal Plan Balance: $<%= balance.toFixed(2) %>
       </div>
           <form action="/logout?_method=DELETE" method="POST">
 	        <button class="nav-btn" type="submit">Log Out</button>
@@ -231,7 +227,7 @@
   <div class="vendor-info">
     <p><%= vendorMenu.vendor_name %></p>
     <p><%= vendorMenu.vendor_description %></p>
-    <p>Estimated prep time: 9 minutes</p>
+    <p>Estimated prep time: <%= prepTime.toFixed(2) %> Minutes</p>
   </div>
 
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CampusFoodLink – Admin Home</title>
+    <title>CampusFoodLink - Start Page</title>
     <style>
         * {
             box-sizing: border-box;
@@ -18,6 +18,7 @@
         }
 
         .header {
+            background: #fff;
             text-align: center;
             padding: 14px;
             font-size: 28px;
@@ -31,6 +32,11 @@
             border: 1px solid #ccc;
             padding: 10px 16px;
             margin: 0 10px;
+        }
+
+        .nav-left {
+            display: flex;
+            gap: 8px;
         }
 
         .nav-btn {
@@ -56,7 +62,7 @@
             align-items: center;
         }
 
-        .active-box {
+        .balance-box {
             background: #e8d9a8;
             border: 1px solid #bbb;
             padding: 8px 14px;
@@ -66,31 +72,75 @@
 
         .main {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 20px;
+            gap: 0;
             margin: 10px;
             border: 1px solid #ccc;
-            padding: 20px;
         }
 
-        .vendor-section {
-            width: 40%;
-            padding: 10px;
+        .vendors-section {
+            flex: 2;
             border-right: 1px solid #ccc;
+            padding: 16px;
         }
 
-        .student-meal {
-            width 60%;
-            padding: 10px;
+            .vendors-section h3 {
+                text-align: center;
+                font-size: 15px;
+                font-weight: normal;
+                margin-bottom: 12px;
+            }
+
+        .vendor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
-        .vendor-card,
-        .student-card {
+        .vendor-card {
             border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-            background: #f9f9f9;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+            .vendor-card p {
+                font-size: 13px;
+                color: #444;
+            }
+
+            .vendor-card button {
+                align-self: flex-end;
+                margin-top: 8px;
+                background: #e8d9a8;
+                border: 1px solid #bbb;
+                padding: 4px 10px;
+                font-size: 12px;
+                cursor: pointer;
+            }
+
+                .vendor-card button:hover {
+                    background: #d4c48e;
+                }
+
+        .order-section {
+            flex: 1;
+            padding: 16px;
+        }
+
+            .order-section h3 {
+                text-align: center;
+                font-size: 15px;
+                font-weight: normal;
+                margin-bottom: 12px;
+            }
+
+        .order-box {
+            border: 1px solid #ccc;
+            padding: 12px;
+            font-size: 13px;
+            color: #444;
+            line-height: 1.8;
         }
 
         /* Hamburger */
@@ -126,14 +176,14 @@
                 .dropdown a:hover {
                     background: #e8d9a8;
                 }
-
     </style>
 </head>
 <body>
 
     <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
     <div class="dropdown" id="navMenu">
-        <a href="/accountmanagement">Account Management</a>
+        <a href="/student/home">Student Home</a>
+        <a href="/orderhistory">Order History</a>
     </div>
 
     <div class="header">CampusFoodLink</div>
@@ -142,58 +192,27 @@
 
     <div class="navbar">
         <div class="nav-left">
-            <button class="nav-btn" onclick="window.location.href='/accountmanagement'">Account Management</button>
+            <button class="nav-btn" onclick="window.location.href='orderhistory.html'">Order History</button>
         </div>
-        <div class="nav-center">Admin Home</div>
+        <div class="nav-center">Welcome to CampusFoodLink</div>
         <div class="nav-right">
-            <div class="active-box">
-                Total Vendors: <%= vendors.length %>
             </div>
             <form action="/logout?_method=DELETE" method="POST">
                 <button class="nav-btn" type="submit">Log Out</button>
             </form>
         </div>
-    </div>
 
 
 
     <div class="main">
-        <div class="vendor-section">
-            <h3>Vendors</h3>
-            <% vendorsAndStats.forEach(vendor => { %>
-           <div class="vendor-card">
-               <span><%= vendor.vendor_name %></span>
-               <p>Prep Time: <%= vendor.prepTime.toFixed(2) %> Minutes</p>
-           </div>
-            <br />
-            <% }) %>
-            </div>
 
-
-        <div class="student-meal">
-                <h3>Student Meal Plans</h3>
-            <% students.forEach(student => { %>
-            <div class="student-card">
-                <p>Email: <%= student.email %> </p>
-                <p>student id <%= student.Student_id %></p>
-                <p>Meal plan Balance: $<%= student.meal_plan_balance.toFixed(2) %> </p>
-                <form action="/admin/addbal" method="POST">
-                    <input type="hidden" name="studentId" value="<%= student.Student_id %>">
-                    <input type="number" name="amount" placeholder="Example: 2.50" required>
-                    <button type="submit">Add Funds</button>
-                </form>
-             </div>
-            <br />
-            <% }) %>
-        </div>
     </div>
 
-
     <script>
-    function toggleMenu() {
-      const menu = document.getElementById('navMenu');
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
+			function toggleMenu() {
+			const menu = document.getElementById('navMenu');
+			menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+			}
     </script>
 
 </body>

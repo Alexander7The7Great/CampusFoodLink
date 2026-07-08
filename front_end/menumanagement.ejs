@@ -102,6 +102,22 @@
       margin-top: 4px;
     }
 
+    .edit-form {
+        display: none;
+        margin-top: 10px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+
+    .edit-form.show {
+        display: block;
+    }
+
+    .edit-form input {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
     .toggle {
       width: 36px;
       height: 20px;
@@ -246,8 +262,7 @@
     <div class="nav-center"><%= vendorMenu.vendor_name %> Menu Management</div>
     <div class="nav-right">
         <div class="total-box">
-            Total Menu Items<br />
-            6
+            Total Menu Items: <%= vendorMenu.menuItems.length %>
         </div>
         <form action="/logout?_method=DELETE" method="POST">
             <button class="nav-btn" type="submit">Log Out</button>
@@ -269,24 +284,48 @@
           <p><%= item.food_name %></p>
           <p><%= item.food_description %></p>
           <p>$<%= item.price %></p>
-         <div class="change-btns">
-          <div class="available-row">
-              <span>Available</span>
-              <form action="/menumngt/availability/" method="POST">
-                  <input type="hidden" name="itemId" value="<%= item.item_id %>">
-                  <input type="hidden" name="available" value="<%= item.available === 'Yes' ? 'No' : 'Yes' %>">
-                  <button type="submit" class="toggle <%= item.available === 'Yes' ? 'on' : '' %>"></button>
-              </form>
+          <div class="change-btns">
+              <div class="available-row">
+                  <form action="/menumngt/availability/" method="POST">
+                      <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                      <input type="hidden" name="available" value="<%= item.available === 'Yes' ? 'No' : 'Yes' %>">
+                      <button type="submit" class="toggle <%= item.available === 'Yes' ? 'on' : '' %>"></button>
+                  </form>
+              </div>
+              <div class="card-btns">
+                  <button onclick="toggleEdit(<%= item.item_id %>)">Edit</button>  <!--Update details on specific food on the menu-->
+                  <form action="menumngt/delete" method="POST">
+                      <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                      <input type="hidden" name="venID" value="<%= vendorMenu.vendor_id %>">
+                      <button type="submit">Delete</button>
+                  </form> <!--Remove a food from the menu-->
+              </div>
+              <div class="edit-form" id="edit-<%= item.item_id %>">
+                  <form action="/menumngt/update" method="POST">
+
+                      <input type="hidden" name="itemId" value="<%= item.item_id %>">
+                      <input type="hidden" name="venID" value="<%= vendorMenu.vendor_id %>">
+
+                      <div class="form-group">
+                          <label>Food Name</label>
+                          <input type="text" name="foodName" value="<%= item.food_name %>">
+                      </div>
+
+                      <div class="form-group">
+                          <label>Description</label>
+                          <input type="text" name="foodDescrip" value="<%= item.food_description %>">
+                      </div>
+
+                      <div class="form-group">
+                          <label>Price</label>
+                          <input type="number" name="price" value="<%= item.price %>">
+                      </div>
+                      <button type="submit" class="nav-btn"> Save Changes
+                      </button>
+
+                  </form>
+              </div>
           </div>
-          <div class="card-btns">
-            <button>Edit</button>  <!--Update details on specific food on the menu-->
-            <form action="menumngt/delete" method="POST">
-                <input type="hidden" name="itemId" value="<%= item.item_id %>">
-                <input type="hidden" name="venID"  value="<%= vendorMenu.vendor_id %>">
-                <button type="submit">Delete</button>
-                </form> <!--Remove a food from the menu-->
-          </div>
-         </div>
         </div>
         <% }) %>
 
@@ -297,22 +336,25 @@
     <div class="add-section">
       <h3>Add Items</h3>
         <!--Create a new item in the menu_item table-->
+      <form action="/menumngt/addmenu" method="POST">
+          <input type="hidden" name="venID" value="<%= vendorMenu.vendor_id %>" />
       <div class="form-group">
         <label>Food Name:</label>
-        <input type="text" placeholder="Example: Fries" />
+        <input type="text" name="foodName" placeholder="Example: Fries" />
       </div>
 
       <div class="form-group">
         <label>Food Description:</label>
-        <input type="text" placeholder="Example: Fried Golden and Salted" />
+        <input type="text" name="foodDescrip" placeholder="Example: Fried Golden and Salted" />
       </div>
 
       <div class="form-group">
         <label>Food Price:</label>
-        <input type="text" placeholder="Example: 2.50" />
+        <input type="number" name="price" step="0.1" placeholder="Example: 2.50" />
       </div>
 
-      <button class="add-btn">Add to Menu</button>
+      <button type="submit" class="add-btn">Add to Menu</button>
+      </form>
     </div>
   </div>
 
@@ -320,6 +362,12 @@
     function toggleMenu() {
       const menu = document.getElementById('navMenu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      }
+
+      function toggleEdit(itemId) {
+          const form = document.getElementById("edit-" + itemId);
+
+          form.classList.toggle("show");
       }
   </script>
 

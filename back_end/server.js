@@ -14,10 +14,11 @@ const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 const { getMealPlanBalance, addMealBalance } = require('./mealPlanTransactionsModule')
 const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor,
-    updateAvailability, deleteMenuItem } = require('./vendorAndMenuModule')
+    updateAvailability, deleteMenuItem, updateMenuItem, addMenuItem} = require('./vendorAndMenuModule')
 const { createOrder, getActiveOrders, getIncomingOrders,
     getOrderQueue, updateOrderStatus, rejectOrder } = require('./orderManagementModule')
 const { getAllStudents } = require('./accountManagement')
+const { getPrepTime } = require('./reporting')
 const initializePassport = require('./passportConfig')
 
 // Open the SQLite database once on startup and share it
@@ -60,7 +61,8 @@ async function startServer() {
         const venID = req.params.vendorId
         const vendorMenu = await getVendorsMenu(db, venID)
         const balance = await getMealPlanBalance(db, req.user.user_id)
-        res.render('vendormenu.ejs', { vendorMenu, balance })
+        const prepTime = await getPrepTime(db, venID)
+        res.render('vendormenu.ejs', { vendorMenu, balance, prepTime })
     })
 
     //take the post from the menu and run the order creation function
@@ -160,6 +162,21 @@ async function startServer() {
 
         res.redirect('/menumanagement')
     })
+
+    app.post('/menumngt/update', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { itemId, venID, foodName, foodDescrip, price } = req.body;
+        await updateMenuItem(db, itemId, venID, foodName, foodDescrip, price);
+
+        res.redirect('/menumanagement')
+    })
+
+    app.post('/menumngt/addmenu', checkAuthenticated, checkRole('vendor'), async (req, res) => {
+        const { venID, foodName, foodDescrip, price } = req.body;
+        await addMenuItem(db, venID, foodName, foodDescrip, price);
+
+        res.redirect('/menumanagement')
+    })
+
     //--------------------VENDOR____ROUTES-----------------------
 
 
@@ -172,7 +189,17 @@ async function startServer() {
     app.get('/admin/home', checkAuthenticated, checkRole('admin'), async (req, res) => {
 
         const students = await getAllStudents(db);
-        res.render('adminhome.ejs', { students })
+
+        const vendors = await getVendors(db);
+        const vendorsAndStats = await Promise.all(vendors.map(async (vendor) => ({
+            vendor_id: vendor.vendor_id,
+            vendor_name: vendor.vendor_name,
+            prepTime: await getPrepTime(db, vendor.vendor_id)
+        })));
+
+        console.log(vendorsAndStats);
+
+        res.render('adminhome.ejs', { students, vendorsAndStats, vendors })
     })
 
     app.post('/admin/addbal', checkAuthenticated, checkRole('admin'), async (req, res) => {
@@ -191,7 +218,9 @@ async function startServer() {
 
 
     //--------------------LOGIN/REGISTER____ROUTES-------------------------
-
+    app.get('/', (req,res) => {
+        res.render('index.ejs')
+    })
 
     app.get('/login', checkNotAuthenticated, (req, res) => {
         res.render('login.ejs')

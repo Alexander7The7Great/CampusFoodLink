@@ -244,8 +244,7 @@
     <div class="nav-center"><%= vendorMenu.vendor_name %></div>
     <div class="nav-right">
         <div class="active-box">
-            Total Active Orders<br />
-            3
+            Total Active Orders: <%= orderQueue.length %>
         </div>
         <form action="/logout?_method=DELETE" method="POST">
             <button class="nav-btn" type="submit">Log Out</button>
