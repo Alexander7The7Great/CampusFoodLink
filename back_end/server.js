@@ -111,6 +111,8 @@ async function startServer() {
 
         res.redirect('/vendor/home');
     })
+
+
     //post to add funds back to the student, set the order status to rejected
     app.post('/vendor/order/reject', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         const { orderId, studentId, orderTotal } = req.body;
@@ -120,6 +122,8 @@ async function startServer() {
         res.redirect('/vendor/home');
     })
 
+
+    //post route that updates the order to ready so the student knows they can pick it up now
     app.post('/vendor/order/ready', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         const { orderId } = req.body;
         const time = new Date().toISOString();
@@ -128,6 +132,7 @@ async function startServer() {
         res.redirect('/vendor/home');
     })
 
+    //post route that will update the order as complete when the student picks it up
     app.post('/vendor/order/complete', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         const { orderId } = req.body;
         const time = new Date().toISOString();
@@ -191,6 +196,9 @@ async function startServer() {
         const students = await getAllStudents(db);
 
         const vendors = await getVendors(db);
+
+        //create an array of the needed information for the stats of vendors
+        //had to use promise.all as it was creashing without it
         const vendorsAndStats = await Promise.all(vendors.map(async (vendor) => ({
             vendor_id: vendor.vendor_id,
             vendor_name: vendor.vendor_name,
@@ -202,6 +210,8 @@ async function startServer() {
         res.render('adminhome.ejs', { students, vendorsAndStats, vendors })
     })
 
+
+    //post route to add the entered amount into the specific students meal plan balance
     app.post('/admin/addbal', checkAuthenticated, checkRole('admin'), async (req, res) => {
         console.log(req.body);
         const { studentId, amount } = req.body;
@@ -218,15 +228,19 @@ async function startServer() {
 
 
     //--------------------LOGIN/REGISTER____ROUTES-------------------------
-    app.get('/', (req,res) => {
-        res.render('index.ejs')
-    })
 
+    //Index page that does not require authentication or a role to serve as an all purpose route for finding
+    //the campusfoodlink or routing users to when they try to go to the login or register pages when they are
+    //already logged in
+    app.get('/', (req, res) => {
+        res.render('index.ejs', { user: req.user })
+    });
+
+    //route to load the login page, and check if the user is already logged in to route them back
+    //to the index page
     app.get('/login', checkNotAuthenticated, (req, res) => {
-        res.render('login.ejs')
-    })
-
-
+        res.render('login.ejs');
+    });
 
     //post the information gained in the login page
     app.post('/login', checkNotAuthenticated, (req, res, next) => {

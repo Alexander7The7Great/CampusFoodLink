@@ -182,8 +182,8 @@
 
     <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
     <div class="dropdown" id="navMenu">
-        <a href="/student/home">Student Home</a>
-        <a href="/orderhistory">Order History</a>
+        <a href="/login">Login Page</a>
+        <a href="/register">Register Page</a>
     </div>
 
     <div class="header">CampusFoodLink</div>
@@ -191,16 +191,25 @@
 
 
     <div class="navbar">
+        <% if (user) { %>
         <div class="nav-left">
-            <button class="nav-btn" onclick="window.location.href='orderhistory.html'">Order History</button>
+            <button class="nav-btn" onclick="window.location.href='/<%= user.role_name %>/home'">Go to Home</button>
         </div>
         <div class="nav-center">Welcome to CampusFoodLink</div>
         <div class="nav-right">
-            </div>
             <form action="/logout?_method=DELETE" method="POST">
                 <button class="nav-btn" type="submit">Log Out</button>
             </form>
         </div>
+        <% } else { %>
+        <div class="nav-left">
+        </div>
+        <div class="nav-center">Welcome to CampusFoodLink</div>
+        <div class="nav-right">
+            <button class="nav-btn" onclick="window.location.href='/login'">Log in</button>
+        </div>
+        <% } %>
+    </div>
 
 
 
