@@ -21,6 +21,8 @@ async function getPrepTime(db, venID) {
         return sum + (new Date(row.prep_end) - new Date(row.prep_start)) / 60000;
     }, 0);
 
+
+    //divide by the length of prepTime to get the average minutes that orders take to prep
     return totalMinutes / prepTime.length;
 }
 
