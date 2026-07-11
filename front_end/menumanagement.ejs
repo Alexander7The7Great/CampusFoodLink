@@ -318,7 +318,7 @@
 
                       <div class="form-group">
                           <label>Price</label>
-                          <input type="number" name="price" value="<%= item.price %>">
+                          <input type="number" step=".05" min="0" name="price" value="<%= item.price %>">
                       </div>
                       <button type="submit" class="nav-btn"> Save Changes
                       </button>
@@ -350,7 +350,7 @@
 
       <div class="form-group">
         <label>Food Price:</label>
-        <input type="number" name="price" step="0.1" placeholder="Example: 2.50" />
+        <input type="number" name="price" min="0" step="0.05" placeholder="Example: 2.50" />
       </div>
 
       <button type="submit" class="add-btn">Add to Menu</button>

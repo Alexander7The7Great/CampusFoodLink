@@ -1,5 +1,6 @@
 
-//This wont work,vendor id isnt in the order history table, and matching preparing and closed orders are needed to actually make this work
+//This wont work,vendor id isnt in the order history table, and matching preparing and closed order status are needed to actually make this work
+//changed it up so the vendor ID can be used, and 
 async function getPrepTime(db, venID) {
     const prepTime = await db.all(`
         SELECT
@@ -17,6 +18,9 @@ async function getPrepTime(db, venID) {
 
     if (prepTime.length === 0) return 0;
 
+
+    //add up all the dates to get a total difference between start and end times, and 
+    //convert it into minutes to be useful to the vendors and any stats
     const totalMinutes = prepTime.reduce((sum, row) => {
         return sum + (new Date(row.prep_end) - new Date(row.prep_start)) / 60000;
     }, 0);

@@ -93,6 +93,14 @@
             background: #f9f9f9;
         }
 
+        .fund-btn {
+            background: #e8d9a8;
+            border: 1px solid #bbb;
+            padding: 3px 5px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
         /* Hamburger */
         .hamburger {
             position: fixed;
@@ -179,8 +187,8 @@
                 <p>Meal plan Balance: $<%= student.meal_plan_balance.toFixed(2) %> </p>
                 <form action="/admin/addbal" method="POST">
                     <input type="hidden" name="studentId" value="<%= student.Student_id %>">
-                    <input type="number" name="amount" placeholder="Example: 2.50" required>
-                    <button type="submit">Add Funds</button>
+                    <input type="number" step=".05" min="0" name="amount" placeholder="Example: 2.50" required>
+                    <button type="submit" class="fund-btn">Add Funds</button>
                 </form>
              </div>
             <br />

@@ -76,72 +76,27 @@
             gap: 0;
             margin: 10px;
             border: 1px solid #ccc;
+            justify-content: center;
+            align-items: center;
         }
 
-        .vendors-section {
-            flex: 2;
-            border-right: 1px solid #ccc;
-            padding: 16px;
-        }
-
-            .vendors-section h3 {
-                text-align: center;
-                font-size: 15px;
-                font-weight: normal;
-                margin-bottom: 12px;
-            }
-
-        .vendor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .vendor-card {
+        .welcoming-card {
+            max-width: 700px;
             border: 1px solid #ccc;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+            background: #fafafa;
+            padding: 40px;
+            border-radius: 6px;
+            text-align: center;
         }
 
-            .vendor-card p {
-                font-size: 13px;
-                color: #444;
-            }
-
-            .vendor-card button {
-                align-self: flex-end;
-                margin-top: 8px;
-                background: #e8d9a8;
-                border: 1px solid #bbb;
-                padding: 4px 10px;
-                font-size: 12px;
-                cursor: pointer;
-            }
-
-                .vendor-card button:hover {
-                    background: #d4c48e;
-                }
-
-        .order-section {
-            flex: 1;
-            padding: 16px;
+        .welcoming-card h2 {
+            font-size: 35px;
+            margin-bottom: 25px;
         }
 
-            .order-section h3 {
-                text-align: center;
-                font-size: 15px;
-                font-weight: normal;
-                margin-bottom: 12px;
-            }
-
-        .order-box {
-            border: 1px solid #ccc;
-            padding: 12px;
-            font-size: 13px;
-            color: #444;
-            line-height: 1.8;
+        .welcoming-card p {
+            font-size: 20px;
+            line-height: 2.0;
         }
 
         /* Hamburger */
@@ -215,7 +170,13 @@
 
 
     <div class="main">
-
+        <div class="welcoming-card">
+        <h2>Welcome</h2><br />
+        <p>
+        This is CampusFoodLink, the centralized dining service application to provide our students
+        the easiest access and transparent information for ordering food from the many vendors that
+        are available all across our campus. </p>
+        </div>
     </div>
 
     <script>

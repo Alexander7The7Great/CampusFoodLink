@@ -1,5 +1,5 @@
 //will need to pull the deduct function in order to have the amount taken from the account and a transaction log created along with it
-const { deductMealBalance, addMealBalance } = require('./mealPlanTransactionsModule')
+const { deductMealBalance, addMealBalance, getStudentProfile } = require('./mealPlanTransactionsModule')
 
 //create the order with the associated status, order items, and transaction log.
 async function createOrder(db, userId, venID, orderTotal, time, order) {
@@ -36,6 +36,8 @@ async function updateOrderStatus(db, orderID, status, time) {
     [orderID, status, time])
 }
 
+
+//pull the current orders that a student has 
 async function getActiveOrders(db, studentId) {
     return db.all(
         `SELECT o.order_id, o.order_total, v.vendor_name,
@@ -55,6 +57,39 @@ async function getActiveOrders(db, studentId) {
     )
 }
 
+//get the orders that a student has made in the past rejected and completed and the items that were on those orders
+async function getOrderHist(db, userId) {
+    //get the student id to pull the orders
+    const studentId = await getStudentProfile(db, userId);
+    const orders = await db.all(
+        `SELECT o.order_id, o.order_total, o.time_created, v.vendor_name,
+                osh.status
+         FROM "order" o
+         JOIN vendor v ON o.vendor_id = v.vendor_id
+         JOIN order_status_history osh ON osh.history_id = (
+             SELECT history_id
+             FROM order_status_history
+             WHERE order_id = o.order_id
+             ORDER BY changed_at DESC
+             LIMIT 1
+         )
+         WHERE o.student_id = ? AND osh.status IN ('Complete', 'Rejected')
+         ORDER BY o.time_created DESC` ,
+        [studentId.Student_id]
+    )
+
+    //pull the items for each order
+    for (const order of orders) {
+        order.food = await db.all(
+            `SELECT mi.food_name, mi.price, oi.amount
+             FROM order_item oi
+             JOIN menu_item mi ON mi.item_id = oi.item_id
+             WHERE oi.order_id = ?`,
+            [order.order_id]
+        )
+    }
+    return orders
+}
 
 //pull the orders that are currently pending
 async function getIncomingOrders(db, venID) {
@@ -130,5 +165,5 @@ async function getOrderQueue(db, venID) {
 
 module.exports = {
     createOrder, rejectOrder, getActiveOrders,
-    getIncomingOrders, getOrderQueue, updateOrderStatus
+    getIncomingOrders, getOrderQueue, updateOrderStatus, getOrderHist
 }
