@@ -164,7 +164,7 @@
     </div>
 
 
-
+    <!--use the venodrs and stats variable to show the stats of each vendor-->
     <div class="main">
         <div class="vendor-section">
             <h3>Vendors</h3>
@@ -183,9 +183,11 @@
             <% students.forEach(student => { %>
             <div class="student-card">
                 <p>Email: <%= student.email %> </p>
-                <p>student id <%= student.Student_id %></p>
+                <p>student id: <%= student.Student_id %></p>
                 <p>Meal plan Balance: $<%= student.meal_plan_balance.toFixed(2) %> </p>
                 <form action="/admin/addbal" method="POST">
+                    <!--make sure the number cannot go under 0 and is counted in increments of .05 that would make sense for
+                        currency-->
                     <input type="hidden" name="studentId" value="<%= student.Student_id %>">
                     <input type="number" step=".05" min="0" name="amount" placeholder="Example: 2.50" required>
                     <button type="submit" class="fund-btn">Add Funds</button>

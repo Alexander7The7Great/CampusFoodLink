@@ -166,8 +166,12 @@
 
     <div class="main">
 
+        <!--when there are no orders for the student show that there were none-->
         <% if (orders.length === 0) { %>
             <p class="no-orders">No order history found.</p>
+
+        <!--When there are orders show each of them, with the order id and vendor it was with, and the date of the order
+            along with the items that were on it, status of the order, and total of that order-->
         <% } else { %>
             <% orders.forEach(order => { %>
             <div class="order-card">

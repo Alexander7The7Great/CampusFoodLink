@@ -189,6 +189,8 @@ async function startServer() {
         }
     })
 
+
+    //change the availability of items from the menu based on the toggle button being clicked
     app.post('/vendor/menu/availability', checkAuthenticated, checkRole('vendor'), async (req, res) => {
         try {
             const { itemId, available } = req.body;

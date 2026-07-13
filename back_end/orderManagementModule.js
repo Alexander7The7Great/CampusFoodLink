@@ -25,12 +25,14 @@ async function createOrder(db, userId, venID, orderTotal, time, order) {
     await updateOrderStatus(db, orderID, 'Pending', time)
 }
 
-
+//function to reject orders from the incoming order section, easily done with the add balance and update order status functions
+//that already exists
 async function rejectOrder(db, orderID, studentId, amount, time) {
     await addMealBalance(db, studentId, amount, time)
     await updateOrderStatus(db, orderID, 'Rejected', time)
 }
 
+//update the status of an order based on the id, and the next logical status, and time of the change
 async function updateOrderStatus(db, orderID, status, time) {
     await db.run('INSERT INTO order_status_history (order_id, status, changed_at) VALUES (?, ?, ?)',
     [orderID, status, time])

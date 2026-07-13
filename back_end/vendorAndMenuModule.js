@@ -2,6 +2,8 @@
 async function getVendors(db) {
     return db.all('SELECT * FROM vendor')
 }
+
+//pull the ID for a vendor so it can be used for functions needing vendor information
 async function getVendorID(db, userID) {
     return db.get('SELECT vendor_id FROM vendor WHERE user_id = ?',
     [userID])
@@ -28,7 +30,8 @@ async function getVendorsMenu(db, venID) {
     }
 }
 
-
+//have the menu accessed for the specific vendor, so vendor home and menu management page
+//can view and interact/change items
 async function getMenuForVendor(db, venID) {
     const vendor = await getVendorByID(db, venID)
     const menu = await db.all(

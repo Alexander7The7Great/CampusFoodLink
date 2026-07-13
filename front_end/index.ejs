@@ -147,6 +147,7 @@
 
 
     <div class="navbar">
+        <!--When the user is logged in have a log out button and button to route them to your right home-->
         <% if (user) { %>
         <div class="nav-left">
             <button class="nav-btn" onclick="window.location.href='/<%= user.role_name %>/home'">Go to Home</button>
@@ -157,6 +158,7 @@
                 <button class="nav-btn" type="submit">Log Out</button>
             </form>
         </div>
+        <!--When a user is not logged in show a login button for them to get routed to the page-->
         <% } else { %>
         <div class="nav-left">
         </div>

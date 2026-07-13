@@ -16,6 +16,8 @@ async function getPrepTime(db, venID) {
         GROUP BY prep.order_id
     `, [venID]);
 
+
+    //return zero when there is no prep time so a division by zero error does not occur
     if (prepTime.length === 0) return 0;
 
 
