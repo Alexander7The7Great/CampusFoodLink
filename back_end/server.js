@@ -12,14 +12,24 @@ const session = require('express-session')
 const methodOverride = require('method-override')
 const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
+
+
 const { getMealPlanBalance, addMealBalance } = require('./mealPlanTransactionsModule')
-const { getVendors, getVendorsMenu, getVendorID, getVendorByID, getMenuForVendor,
-    updateAvailability, deleteMenuItem, updateMenuItem, addMenuItem} = require('./vendorAndMenuModule')
+
+const { getVendors, getVendorsMenu, getVendorID,
+    getVendorByID, getMenuForVendor,
+    updateAvailability, deleteMenuItem,
+    updateMenuItem, addMenuItem } = require('./vendorAndMenuModule')
 const { createOrder, getActiveOrders, getIncomingOrders,
-    getOrderQueue, updateOrderStatus, rejectOrder, getOrderHist } = require('./orderManagementModule')
+    getOrderQueue, updateOrderStatus,
+    rejectOrder, getOrderHist } = require('./orderManagementModule')
+
 const { getAllStudents } = require('./accountManagement')
 const { getPrepTime } = require('./reporting')
+
 const initializePassport = require('./passportConfig')
+
+
 
 // Open the SQLite database once on startup and share it
 async function startServer() {
@@ -27,6 +37,8 @@ async function startServer() {
         filename: './database/Dining_Database.db',
         driver: sqlite3.Database
     })
+
+
 
     //have passport access the database
     initializePassport(passport, db)
@@ -40,9 +52,15 @@ async function startServer() {
         resave: false,
         saveUninitialized: false,
     }))
+
+
+
     app.use(passport.initialize())
     app.use(passport.session())
     app.use(methodOverride('_method'))
+
+
+
 
 
 

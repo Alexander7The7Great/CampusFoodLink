@@ -53,7 +53,7 @@ async function getActiveOrders(db, studentId) {
              ORDER BY changed_at DESC
              LIMIT 1
          )
-         WHERE o.student_id = ? AND osh.status != 'Ready'
+         WHERE o.student_id = ? AND osh.status != 'Complete'
          ORDER BY osh.changed_at DESC` ,
          [studentId]
     )
@@ -166,6 +166,11 @@ async function getOrderQueue(db, venID) {
 }
 
 module.exports = {
-    createOrder, rejectOrder, getActiveOrders,
-    getIncomingOrders, getOrderQueue, updateOrderStatus, getOrderHist
+    createOrder,
+    rejectOrder,
+    getActiveOrders,
+    getIncomingOrders,
+    getOrderQueue,
+    updateOrderStatus,
+    getOrderHist
 }
